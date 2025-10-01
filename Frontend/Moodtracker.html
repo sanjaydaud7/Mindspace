@@ -1,0 +1,1321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mood Tracker</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="script.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Global Styles */
+        :root {
+            --primary-color: #4073c0;
+            --secondary-color: #6b8eba;
+            --accent-color: #5e60ce;
+            --light-color: #f8f9fa;
+            --dark-color: #001835;
+            --success-color: #4ca154;
+            --text-color: #333333;
+            --background-color: #ffffff;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            color: var(--text-color);
+            line-height: 1.6;
+            background-color: var(--background-color);
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        button {
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 2rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background-color: var(--accent-color);
+            border-radius: 10px;
+        }
+
+        /* Button Styles */
+        .btn-primary, .btn-secondary {
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-weight: 500;
+            transition: var(--transition);
+            border: none;
+            outline: none;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+            box-shadow: var(--shadow);
+        }
+
+        .btn-primary:hover {
+            background-color: #3a5a8c;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            padding: 15px 0;
+            margin-bottom: 30px;
+        }
+
+        header .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 0 20px;
+            width: auto;
+            max-width: none;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--primary-color);
+        }
+
+        .logo i {
+            font-size: 24px;
+        }
+
+        .logo h1 {
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+        }
+
+        .nav-links a {
+            font-weight: 500;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            color: var(--primary-color);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--primary-color);
+            transition: var(--transition);
+        }
+
+        .nav-links a:hover::after, .nav-links a.active::after {
+            width: 100%;
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        /* Mood Tracker Button Styles */
+        .mood-tracker-btn {
+            background-color: var(--accent-color);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 30px;
+            font-weight: 500;
+            transition: var(--transition);
+            border: none;
+            outline: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: var(--shadow);
+        }
+
+        .mood-tracker-btn:hover {
+            background-color: #4a4cb7;
+        }
+
+        .mood-tracker-btn i {
+            font-size: 16px;
+        }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+        }
+
+        .hamburger span {
+            width: 25px;
+            height: 3px;
+            background-color: var(--dark-color);
+            border-radius: 5px;
+            transition: var(--transition);
+        }
+
+        /* User Profile Dropdown Styles */
+        .user-profile-dropdown {
+            position: relative;
+        }
+
+        .profile-trigger {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            color: var(--text-color);
+        }
+
+        .avatar-circle {
+            width: 40px;
+            height: 40px;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 500;
+            font-size: 16px;
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            min-width: 200px;
+            display: none;
+            z-index: 10;
+        }
+
+        .dropdown-menu.active {
+            display: block;
+        }
+
+        .dropdown-item {
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-color);
+            transition: var(--transition);
+        }
+
+        .dropdown-item:hover {
+            background-color: var(--light-color);
+            color: var(--primary-color);
+        }
+
+        .dropdown-divider {
+            height: 1px;
+            background-color: #eee;
+            margin: 5px 0;
+        }
+
+        /* Mood Tracker Styles */
+        .mood-container {
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 1000px;
+            overflow: hidden;
+            margin: 0 auto 30px;
+        }
+
+        .mood-header {
+            background: linear-gradient(90deg, #4b6cb7 0%, #182848 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .mood-header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 1rem;
+            opacity: 0.8;
+        }
+
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        @media (min-width: 768px) {
+            .main-content {
+                flex-direction: row;
+            }
+        }
+
+        .camera-section {
+            flex: 1;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .chart-section {
+            flex: 1;
+            padding: 20px;
+        }
+
+        .video-container {
+            width: 100%;
+            max-width: 400px;
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        #video {
+            width: 100%;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transform: scaleX(-1);
+        }
+
+        .canvas-container {
+            position: relative;
+            width: 100%;
+            max-width: 400px;
+            margin-top: 20px;
+        }
+
+        #canvas {
+            width: 100%;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            display: none;
+        }
+
+        .countdown {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 5rem;
+            color: white;
+            text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            display: none;
+        }
+
+        .btn {
+            background: linear-gradient(90deg, #4b6cb7 0%, #182848 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 50px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            margin: 10px 0;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+        }
+
+        .result {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            min-height: 36px;
+            color: #4b6cb7;
+        }
+
+        .mood-emoji {
+            font-size: 2rem;
+            margin-right: 10px;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin-top: 20px;
+        }
+
+        .mood-history {
+            margin-top: 30px;
+        }
+
+        .history-title {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            color: #4b6cb7;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+        }
+
+        .history-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .history-item:hover {
+            background-color: #f9f9f9;
+        }
+
+        .instructions {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        .instructions h3 {
+            margin-bottom: 10px;
+            color: #4b6cb7;
+        }
+
+        .instructions ul {
+            padding-left: 20px;
+        }
+
+        .instructions li {
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+
+        .mood-color {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .angry { background-color: #ff4d4d; }
+        .disgust { background-color: #9933ff; }
+        .fear { background-color: #ff9933; }
+        .happy { background-color: #00cc66; }
+        .neutral { background-color: #6699ff; }
+        .sad { background-color: #6666ff; }
+        .surprise { background-color: #ffcc00; }
+
+        /* Loading Spinner */
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top: 4px solid var(--primary-color);
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 10px auto;
+            display: none;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Error Message */
+        .error-message {
+            background-color: #ffebee;
+            color: #c62828;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            text-align: center;
+            display: none;
+        }
+
+        /* Footer Section */
+        footer {
+            background-color: var(--dark-color);
+            color: white;
+            padding: 60px 0 20px;
+        }
+
+        .footer-top {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+
+        .footer-column h3 {
+            margin-bottom: 20px;
+            font-weight: 500;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .footer-column h3::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 40px;
+            height: 2px;
+            background-color: var(--primary-color);
+        }
+
+        .footer-column p {
+            margin-bottom: 20px;
+            opacity: 0.8;
+        }
+
+        .footer-column ul li {
+            margin-bottom: 10px;
+        }
+
+        .footer-column ul li a, .footer-column ul li {
+            opacity: 0.8;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .footer-column ul li a:hover {
+            opacity: 1;
+            color: var(--primary-color);
+        }
+
+        .social-icons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .social-icons a {
+            width: 40px;
+            height: 40px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .social-icons a:hover {
+            background-color: var(--primary-color);
+            transform: translateY(-3px);
+        }
+
+        .footer-bottom {
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .footer-links a {
+            opacity: 0.8;
+            transition: var(--transition);
+        }
+
+        .footer-links a:hover {
+            opacity: 1;
+            color: var(--primary-color);
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 992px) {
+            .nav-links {
+                gap: 15px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links, .auth-buttons, .mood-tracker-btn, .user-profile-dropdown {
+                display: none;
+            }
+
+            .hamburger {
+                display: flex;
+            }
+
+            .footer-bottom {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .footer-links {
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .auth-buttons {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .auth-buttons button {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+        }
+
+        /* Mobile Menu Styles */
+        .hamburger.active span:nth-child(1) {
+            transform: translateY(8px) rotate(45deg);
+        }
+
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger.active span:nth-child(3) {
+            transform: translateY(-8px) rotate(-45deg);
+        }
+
+        .mobile-menu {
+            position: fixed;
+            top: 70px;
+            left: 0;
+            width: 100%;
+            background-color: white;
+            padding: 20px;
+            box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            transform: translateY(-100%);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 99;
+        }
+
+        .mobile-menu.active {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .mobile-menu .nav-links {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .mobile-menu .auth-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header Section from navbar.html -->
+    <header>
+        <div class="container">
+            <div class="logo">
+                <i class="fas fa-brain"></i>
+                <h1>MindSpace</h1>
+            </div>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="#home" class="active">Home</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#services">Services</a></li>
+                    <li><a href="#resources">Resources</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </nav>
+            <div style="display: flex; gap: 15px; align-items: center;">
+               <button class="mood-tracker-btn">
+                    <i class="fas fa-chart-line"></i><a href="checkhealth.html">Check Your Health</a>
+               </button>
+                
+                <!-- Auth buttons container - will be hidden when logged in -->
+                <div class="auth-buttons-container" style="display: none;">
+                    <div class="auth-buttons">
+                        <button class="btn-secondary">Login</button>
+                        <button class="btn-primary">Register</button>
+                    </div>
+                </div>
+                
+                <!-- User profile dropdown - initially hidden, shown when logged in -->
+                <div class="user-profile-dropdown" style="display: none;">
+                    <div class="profile-trigger" id="profile-trigger">
+                        <div class="avatar-circle" id="header-avatar">U</div>
+                        <span id="header-username">User</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="dropdown-menu" id="profile-dropdown">
+                        <a href="dashboard.html" class="dropdown-item">
+                            <i class="fas fa-tachometer-alt"></i> Dashboard
+                        </a>
+                        <a href="#profile" class="dropdown-item">
+                            <i class="fas fa-user"></i> Profile
+                        </a>
+                        <a href="#settings" class="dropdown-item">
+                            <i class="fas fa-cog"></i> Settings
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <a href="#" id="logout-btn" class="dropdown-item">
+                            <i class="fas fa-sign-out-alt"></i> Sign Out
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </header>
+
+    <div class="mood-container">
+        <div class="mood-header">
+            <h1>Mood Tracker</h1>
+            <p class="subtitle">Track your emotions daily with AI-powered facial expression analysis</p>
+        </div>
+        
+        <div class="main-content">
+            <div class="camera-section">
+                <div class="video-container">
+                    <video id="video" autoplay playsinline></video>
+                    <div class="countdown" id="countdown">5</div>
+                </div>
+                
+                <div class="canvas-container">
+                    <canvas id="canvas"></canvas>
+                </div>
+                
+                <button id="captureBtn" class="btn">Capture Mood</button>
+                <div class="spinner" id="loadingSpinner"></div>
+                <div class="error-message" id="errorMessage"></div>
+                <div class="result" id="result"></div>
+                
+                <div class="instructions">
+                    <h3>How it works:</h3>
+                    <ul>
+                        <li>Click "Capture Mood" to start 5-second countdown</li>
+                        <li>Position your face clearly in the camera view</li>
+                        <li>Stay still until the countdown completes</li>
+                        <li>Your mood will be analyzed and recorded in the chart</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="chart-section">
+                <h2>Daily Mood Chart</h2>
+                <div class="chart-container">
+                    <canvas id="moodChart"></canvas>
+                </div>
+                
+                <div class="mood-history">
+                    <div class="history-title">Today's Mood History</div>
+                    <div id="historyList"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer Section -->
+    <footer id="contact">
+        <div class="container">
+            <div class="footer-top">
+                <div class="footer-column">
+                    <div class="logo">
+                        <i class="fas fa-brain"></i>
+                        <h2>MindSpace</h2>
+                    </div>
+                    <p>Supporting student mental health and wellbeing across higher education institutions in Jammu and Kashmir.</p>
+                </div>
+
+                <div class="footer-column">
+                    <h3>Contact Us</h3>
+                    <ul>
+                        <li><i class="fas fa-envelope"></i> support@mindspace.edu</li>
+                        <li><i class="fas fa-phone"></i> Helpline: 1800-123-4567</li>
+                        <li><i class="fas fa-map-marker-alt"></i> Jammu and Kashmir, India</li>
+                    </ul>
+                </div>
+
+                <div class="footer-column">
+                    <h3>Connect With Us</h3>
+                    <div class="social-icons">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2025 MindSpace. All rights reserved. | A SIH project by <a href="#">Team Innovators</a></p>
+                <div class="footer-links">
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Terms of Service</a>
+                    <a href="#">Emergency Resources</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    
+
+    <script>
+        // DOM elements
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const captureBtn = document.getElementById('captureBtn');
+        const countdown = document.getElementById('countdown');
+        const result = document.getElementById('result');
+        const historyList = document.getElementById('historyList');
+        const loadingSpinner = document.getElementById('loadingSpinner');
+        const errorMessage = document.getElementById('errorMessage');
+        const ctx = canvas.getContext('2d');
+
+        // Set canvas dimensions to match video
+        canvas.width = 640;
+        canvas.height = 480;
+
+        // API endpoints
+        const API_BASE_URL = 'http://localhost:5000';
+        const EMOTION_API_URL = 'http://localhost:5001/predict_emotion';
+
+        // Mood labels and colors
+        const moods = [
+            { label: 'Angry', color: '#ff4d4d', emoji: '😠' },
+            { label: 'Disgust', color: '#9933ff', emoji: '🤢' },
+            { label: 'Fear', color: '#ff9933', emoji: '😨' },
+            { label: 'Happy', color: '#00cc66', emoji: '😄' },
+            { label: 'Neutral', color: '#6699ff', emoji: '😐' },
+            { label: 'Sad', color: '#6666ff', emoji: '😢' },
+            { label: 'Surprise', color: '#ffcc00', emoji: '😲' }
+        ];
+
+        // Initialize mood data
+        let moodData = {
+            labels: [],
+            data: []
+        };
+
+        // Initialize mood history
+        let moodHistory = [];
+
+        // Initialize chart
+        let moodChart = null;
+
+        // Show error message
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.style.display = 'block';
+            setTimeout(() => {
+                errorMessage.style.display = 'none';
+            }, 5000);
+        }
+
+        // Show success notification
+        function showSuccess(message) {
+            // You can replace this with a proper notification system
+            alert(message);
+        }
+
+        // Initialize the chart
+        function initChart() {
+            const ctx = document.getElementById('moodChart').getContext('2d');
+            moodChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: moodData.labels,
+                    datasets: [{
+                        label: 'Mood Trend',
+                        data: moodData.data,
+                        backgroundColor: 'rgba(75, 108, 183, 0.2)',
+                        borderColor: 'rgba(75, 108, 183, 1)',
+                        borderWidth: 2,
+                        pointBackgroundColor: function(context) {
+                            const index = context.dataIndex;
+                            const moodIndex = moodData.data[index];
+                            return moods[moodIndex]?.color || '#ccc';
+                        },
+                        pointRadius: 6,
+                        pointHoverRadius: 8,
+                        tension: 0.3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 6,
+                            ticks: {
+                                callback: function(value) {
+                                    return moods[value]?.label || '';
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return moods[context.raw]?.label || 'Unknown';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Access webcam
+        async function initCamera() {
+            try {
+                if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                    throw new Error('Your browser does not support webcam access');
+                }
+                
+                const stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { width: 640, height: 480 } 
+                });
+                video.srcObject = stream;
+                return stream;
+            } catch (err) {
+                console.error("Error accessing webcam:", err);
+                showError("Error accessing webcam: " + err.message);
+                captureBtn.disabled = true;
+                return null;
+            }
+        }
+
+        // Stop webcam
+        function stopCamera(stream) {
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+                video.srcObject = null;
+            }
+        }
+
+        // Save mood to database
+        async function saveMoodToDatabase(moodData) {
+            try {
+                loadingSpinner.style.display = 'block';
+                const response = await fetch(`${API_BASE_URL}/api/moods`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(moodData)
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to save mood to database');
+                }
+                
+                const data = await response.json();
+                console.log('Mood saved successfully to database:', data); // Log success message to terminal
+                loadingSpinner.style.display = 'none';
+                return data;
+            } catch (error) {
+                console.error('Error saving mood to database:', error);
+                loadingSpinner.style.display = 'none';
+                throw error;
+            }
+        }
+
+        // Load mood history from database
+        async function loadMoodHistory() {
+            try {
+                loadingSpinner.style.display = 'block';
+                const authToken = localStorage.getItem('authToken');
+                const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+                let url = `${API_BASE_URL}/api/moods`;
+                if (authToken && userData.email) {
+                    url += `?userId=${encodeURIComponent(userData.email)}`;
+                }
+                const response = await fetch(url);
+                
+                if (!response.ok) {
+                    throw new Error('Failed to load mood history');
+                }
+                
+                const history = await response.json();
+                
+                moodHistory = history.map(item => ({
+                    time: new Date(item.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                    mood: item.mood,
+                    moodLabel: item.moodLabel
+                }));
+                
+                moodData.labels = moodHistory.map(item => item.time).reverse();
+                moodData.data = moodHistory.map(item => item.mood).reverse();
+                
+                updateHistoryList();
+                
+                if (moodChart) {
+                    moodChart.data.labels = moodData.labels;
+                    moodChart.data.datasets[0].data = moodData.data;
+                    moodChart.update();
+                }
+                
+                loadingSpinner.style.display = 'none';
+                return history;
+            } catch (error) {
+                console.error('Error loading mood history:', error);
+                loadingSpinner.style.display = 'none';
+                
+                moodHistory = [];
+                moodData = { labels: [], data: [] };
+                
+                if (moodChart) {
+                    moodChart.data.labels = moodData.labels;
+                    moodChart.data.datasets[0].data = moodData.data;
+                    moodChart.update();
+                }
+                
+                updateHistoryList();
+            }
+        }
+
+        // Capture mood function
+        async function captureMood() {
+            captureBtn.disabled = true;
+            result.textContent = "Get ready...";
+            
+            const stream = await initCamera();
+            if (!stream) {
+                captureBtn.disabled = false;
+                return;
+            }
+            
+            countdown.style.display = 'block';
+            
+            let count = 5;
+            countdown.textContent = count;
+            
+            const countdownInterval = setInterval(() => {
+                count--;
+                countdown.textContent = count;
+                
+                if (count <= 0) {
+                    clearInterval(countdownInterval);
+                    countdown.style.display = 'none';
+                    
+                    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                    
+                    analyzeMood(stream);
+                }
+            }, 1000);
+        }
+
+        // Analyze mood by sending image to backend
+        function analyzeMood(stream) {
+            result.textContent = "Analyzing mood...";
+            
+            canvas.toBlob(blob => {
+                const formData = new FormData();
+                formData.append('image', blob, 'capture.jpg');
+                
+                fetch(EMOTION_API_URL, {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    stopCamera(stream);
+                    
+                    if (data.error) {
+                        result.textContent = `Error: ${data.error}`;
+                        captureBtn.disabled = false;
+                        return;
+                    }
+                    
+                    const detectedMood = moods[data.mood];
+                    
+                    result.innerHTML = `<span class="mood-emoji">${detectedMood.emoji}</span> You seem ${detectedMood.label}`;
+                    
+                    const now = new Date();
+                    const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                    const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+                    
+                    const moodDataToSave = {
+                        time: timeString,
+                        mood: data.mood,
+                        moodLabel: detectedMood.label,
+                        userId: userData.email || null
+                    };
+                    
+                    saveMoodToDatabase(moodDataToSave)
+                        .then(savedMood => {
+                            moodHistory.unshift({
+                                time: timeString,
+                                mood: data.mood,
+                                moodLabel: detectedMood.label
+                            });
+                            
+                            if (moodData.labels.length >= 8) {
+                                moodData.labels.shift();
+                                moodData.data.shift();
+                            }
+                            
+                            moodData.labels.unshift(timeString);
+                            moodData.data.unshift(data.mood);
+                            
+                            updateHistoryList();
+                            moodChart.update();
+                            
+                            captureBtn.disabled = false;
+                        })
+                        .catch(error => {
+                            console.error('Error saving mood:', error);
+                            showError("Error saving mood. Please try again.");
+                            captureBtn.disabled = false;
+                        });
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    stopCamera(stream);
+                    showError("Error analyzing mood. Please try again.");
+                    captureBtn.disabled = false;
+                });
+            }, 'image/jpeg');
+        }
+
+        // Update mood history list
+        function updateHistoryList() {
+            historyList.innerHTML = '';
+            
+            if (moodHistory.length === 0) {
+                historyList.innerHTML = '<div class="history-item">No mood history yet</div>';
+                return;
+            }
+            
+            moodHistory.forEach(entry => {
+                const historyItem = document.createElement('div');
+                historyItem.className = 'history-item';
+                
+                historyItem.innerHTML = `
+                    <span>${entry.time}</span>
+                    <span><span class="mood-color ${entry.moodLabel.toLowerCase()}"></span>${entry.moodLabel}</span>
+                `;
+                
+                historyList.appendChild(historyItem);
+            });
+        }
+
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', function() {
+            initChart();
+            loadMoodHistory();
+
+            // Check login status
+            const authToken = localStorage.getItem('authToken');
+            const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+            
+            if (authToken) {
+                // User is logged in - show profile dropdown
+                const authButtonsContainer = document.querySelector('.auth-buttons-container');
+                const userProfileDropdown = document.querySelector('.user-profile-dropdown');
+                
+                if (authButtonsContainer) authButtonsContainer.style.display = 'none';
+                if (userProfileDropdown) userProfileDropdown.style.display = 'block';
+                
+                // Update user info in the dropdown
+                const fullName = `${userData.firstName || ''} ${userData.lastName || ''}`.trim();
+                const initials = ((userData.firstName || '').charAt(0) + (userData.lastName || '').charAt(0)).toUpperCase();
+                
+                const headerUsername = document.getElementById('header-username');
+                const headerAvatar = document.getElementById('header-avatar');
+                
+                if (headerUsername) headerUsername.textContent = userData.firstName || 'User';
+                if (headerAvatar) headerAvatar.textContent = initials || 'U';
+                
+                // Toggle profile dropdown
+                const profileTrigger = document.getElementById('profile-trigger');
+                const profileDropdown = document.getElementById('profile-dropdown');
+                
+                if (profileTrigger && profileDropdown) {
+                    profileTrigger.addEventListener('click', function() {
+                        profileDropdown.classList.toggle('active');
+                    });
+                    
+                    // Close dropdown when clicking outside
+                    document.addEventListener('click', function(event) {
+                        if (!profileTrigger.contains(event.target) && !profileDropdown.contains(event.target)) {
+                            profileDropdown.classList.remove('active');
+                        }
+                    });
+                }
+                
+                // Handle logout
+                const logoutBtn = document.getElementById('logout-btn');
+                if (logoutBtn) {
+                    logoutBtn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        
+                        // Clear authentication data
+                        localStorage.removeItem('authToken');
+                        localStorage.removeItem('userData');
+                        
+                        // Show success notification
+                        showSuccess('Logged out successfully!');
+                        
+                        // Refresh the page after short delay
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 1500);
+                    });
+                }
+            } else {
+                // User is not logged in - show auth buttons
+                const authButtonsContainer = document.querySelector('.auth-buttons-container');
+                const userProfileDropdown = document.querySelector('.user-profile-dropdown');
+                
+                if (authButtonsContainer) authButtonsContainer.style.display = 'flex';
+                if (userProfileDropdown) userProfileDropdown.style.display = 'none';
+            }
+
+            // Mobile menu toggle
+            const hamburger = document.querySelector('.hamburger');
+            const navLinks = document.querySelector('.nav-links');
+            const authButtons = document.querySelector('.auth-buttons');
+            
+            if (hamburger) {
+                hamburger.addEventListener('click', function() {
+                    this.classList.toggle('active');
+                    
+                    // Create mobile menu if it doesn't exist
+                    if (!document.querySelector('.mobile-menu')) {
+                        const mobileMenu = document.createElement('div');
+                        mobileMenu.classList.add('mobile-menu');
+                        
+                        // Clone nav links
+                        const navClone = navLinks.cloneNode(true);
+                        mobileMenu.appendChild(navClone);
+                        
+                        // Add mood tracker button to mobile menu
+                        const moodTrackerBtn = document.createElement('button');
+                        moodTrackerBtn.className = 'mood-tracker-btn';
+                        moodTrackerBtn.innerHTML = '<i class="fas fa-chart-line"></i> Track Your Mood';
+                        moodTrackerBtn.style.margin = '10px 0';
+                        moodTrackerBtn.style.alignSelf = 'center';
+                        mobileMenu.appendChild(moodTrackerBtn);
+                        
+                        // Clone auth buttons
+                        const authClone = authButtons.cloneNode(true);
+                        mobileMenu.appendChild(authClone);
+                        
+                        // Append to header
+                        document.querySelector('header').appendChild(mobileMenu);
+                    }
+                    
+                    // Toggle mobile menu
+                    const mobileMenu = document.querySelector('.mobile-menu');
+                    if (mobileMenu) {
+                        mobileMenu.classList.toggle('active');
+                    }
+                });
+            }
+        });
+
+        // Event listeners
+        captureBtn.addEventListener('click', captureMood);
+    </script>
+</body>
+</html>

@@ -1,0 +1,1009 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - MindSpace</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary-color: #4073c0;
+            --secondary-color: #6b8eba;
+            --accent-color: #5e60ce;
+            --light-color: #f8f9fa;
+            --dark-color: #001835;
+            --success-color: #4ca154;
+            --warning-color: #ff9933;
+            --danger-color: #ff4d4d;
+            --text-color: #333333;
+            --background-color: #ffffff;
+            --card-bg: #ffffff;
+            --sidebar-bg: #182848;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            color: var(--text-color);
+            line-height: 1.6;
+            background-color: #f5f7fb;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: 250px;
+            background-color: var(--sidebar-bg);
+            color: white;
+            padding: 20px 0;
+            transition: var(--transition);
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 1000;
+        }
+
+        .sidebar-header {
+            padding: 0 20px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: white;
+        }
+
+        .sidebar-logo i {
+            font-size: 24px;
+        }
+
+        .sidebar-logo h2 {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+        }
+
+        .sidebar-menu li {
+            margin-bottom: 5px;
+        }
+
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: var(--transition);
+            gap: 10px;
+        }
+
+        .sidebar-menu a:hover, .sidebar-menu a.active {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .sidebar-menu a i {
+            width: 20px;
+            text-align: center;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 250px;
+            padding: 20px;
+        }
+
+        /* Header */
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            background-color: var(--card-bg);
+            padding: 15px 20px;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+        }
+
+        .welcome-message h1 {
+            font-size: 24px;
+            color: var(--dark-color);
+            margin-bottom: 5px;
+        }
+
+        .welcome-message p {
+            color: var(--secondary-color);
+        }
+
+        .date-display {
+            color: var(--secondary-color);
+            font-weight: 500;
+        }
+
+        /* Dashboard Grid */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+        }
+
+        .stat-icon.mood {
+            background-color: var(--accent-color);
+        }
+
+        .stat-icon.assessment {
+            background-color: var(--primary-color);
+        }
+
+        .stat-icon.streak {
+            background-color: var(--success-color);
+        }
+
+        .stat-icon.goal {
+            background-color: var(--warning-color);
+        }
+
+        .stat-info h3 {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .stat-info p {
+            color: var(--secondary-color);
+            font-size: 14px;
+        }
+
+        /* Dashboard Cards */
+        .dashboard-card {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: var(--shadow);
+            margin-bottom: 20px;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .card-header h2 {
+            font-size: 18px;
+            color: var(--dark-color);
+        }
+
+        .card-header a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        /* Charts */
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin-top: 10px;
+        }
+
+        /* Mood History */
+        .mood-history {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .mood-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .mood-item:last-child {
+            border-bottom: none;
+        }
+
+        .mood-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .mood-emoji {
+            font-size: 20px;
+        }
+
+        .mood-time {
+            color: var(--secondary-color);
+            font-size: 14px;
+        }
+
+        /* Assessment Results */
+        .assessment-results {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .assessment-card {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .assessment-score {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .assessment-label {
+            font-size: 14px;
+            color: var(--secondary-color);
+        }
+
+        .assessment-status {
+            margin-top: 5px;
+            font-size: 12px;
+            padding: 3px 8px;
+            border-radius: 20px;
+            display: inline-block;
+        }
+
+        .status-low {
+            background-color: #e6f7ee;
+            color: var(--success-color);
+        }
+
+        .status-moderate {
+            background-color: #fff7e6;
+            color: var(--warning-color);
+        }
+
+        .status-high {
+            background-color: #ffe6e6;
+            color: var(--danger-color);
+        }
+
+        /* Resources */
+        .resources-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .resource-item {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: var(--transition);
+        }
+
+        .resource-item:hover {
+            background-color: #e9ecef;
+        }
+
+        .resource-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            background-color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .resource-info h3 {
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .resource-info p {
+            font-size: 12px;
+            color: var(--secondary-color);
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .sidebar {
+                width: 70px;
+            }
+            
+            .sidebar-header h2, .sidebar-menu span {
+                display: none;
+            }
+            
+            .main-content {
+                margin-left: 70px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 0;
+                overflow: hidden;
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Toggle Sidebar Button */
+        .toggle-sidebar {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            z-index: 1001;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            box-shadow: var(--shadow);
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            .toggle-sidebar {
+                display: flex;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-logo">
+                <i class="fas fa-brain"></i>
+                <h2>MindSpace</h2>
+            </div>
+        </div>
+        
+        <ul class="sidebar-menu">
+            <li><a href="#" class="active"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a></li>
+            <li><a href="Moodtracker.html"><i class="fas fa-chart-line"></i> <span>Mood Tracker</span></a></li>
+            <li><a href="checkhealth.html"><i class="fas fa-heartbeat"></i> <span>Health Check</span></a></li>
+            <li><a href="#"><i class="fas fa-book-open"></i> <span>Resources</span></a></li>
+            <li><a href="#"><i class="fas fa-calendar-check"></i> <span>Appointments</span></a></li>
+            <li><a href="#"><i class="fas fa-user"></i> <span>Profile</span></a></li>
+            <li><a href="#"><i class="fas fa-cog"></i> <span>Settings</span></a></li>
+            <li><a href="#" id="logout-btn"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a></li>
+        </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Header -->
+        <div class="dashboard-header">
+            <div class="welcome-message">
+                <h1>Welcome, <span id="user-name">User</span>!</h1>
+                <p>Here's your mental wellness overview</p>
+            </div>
+            <div class="date-display" id="current-date"></div>
+        </div>
+
+        <!-- Stats Overview -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon mood">
+                    <i class="fas fa-smile"></i>
+                </div>
+                <div class="stat-info">
+                    <h3 id="avg-mood">4.2</h3>
+                    <p>Average Mood</p>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon assessment">
+                    <i class="fas fa-clipboard-check"></i>
+                </div>
+                <div class="stat-info">
+                    <h3 id="assessment-count">3</h3>
+                    <p>Health Assessments</p>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon streak">
+                    <i class="fas fa-fire"></i>
+                </div>
+                <div class="stat-info">
+                    <h3 id="streak-days">7</h3>
+                    <p>Day Streak</p>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon goal">
+                    <i class="fas fa-flag"></i>
+                </div>
+                <div class="stat-info">
+                    <h3 id="goals-achieved">2/5</h3>
+                    <p>Weekly Goals</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Grid -->
+        <div class="dashboard-grid">
+            <!-- Mood Tracking Card -->
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <h2>Mood Tracking</h2>
+                    <a href="Moodtracker.html">View Details</a>
+                </div>
+                <div class="chart-container">
+                    <canvas id="moodChart"></canvas>
+                </div>
+            </div>
+            
+            <!-- Health Assessment Card -->
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <h2>Health Assessment</h2>
+                    <a href="checkhealth.html">Take New Assessment</a>
+                </div>
+                <div class="assessment-results" id="assessment-results">
+                    <!-- Results will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Second Row -->
+        <div class="dashboard-grid">
+            <!-- Recent Mood History -->
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <h2>Recent Mood History</h2>
+                    <a href="Moodtracker.html">See All</a>
+                </div>
+                <div class="mood-history" id="mood-history">
+                    <!-- Mood history will be populated by JavaScript -->
+                </div>
+            </div>
+            
+            <!-- Recommended Resources -->
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <h2>Recommended Resources</h2>
+                    <a href="#">View All</a>
+                </div>
+                <div class="resources-grid">
+                    <div class="resource-item">
+                        <div class="resource-icon">
+                            <i class="fas fa-headphones"></i>
+                        </div>
+                        <div class="resource-info">
+                            <h3>Guided Meditation</h3>
+                            <p>10 min session for stress relief</p>
+                        </div>
+                    </div>
+                    
+                    <div class="resource-item">
+                        <div class="resource-icon">
+                            <i class="fas fa-book"></i>
+                        </div>
+                        <div class="resource-info">
+                            <h3>Coping Strategies</h3>
+                            <p>For anxiety management</p>
+                        </div>
+                    </div>
+                    
+                    <div class="resource-item">
+                        <div class="resource-icon">
+                            <i class="fas fa-video"></i>
+                        </div>
+                        <div class="resource-info">
+                            <h3>Breathing Exercises</h3>
+                            <p>For immediate relaxation</p>
+                        </div>
+                    </div>
+                    
+                    <div class="resource-item">
+                        <div class="resource-icon">
+                            <i class="fas fa-file-pdf"></i>
+                        </div>
+                        <div class="resource-info">
+                            <h3>Sleep Guide</h3>
+                            <p>Improve your sleep quality</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Toggle Sidebar Button (Mobile) -->
+    <button class="toggle-sidebar" id="toggle-sidebar">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <script>
+        // DOM Elements
+        const currentDateEl = document.getElementById('current-date');
+        const userNameEl = document.getElementById('user-name');
+        const moodChartEl = document.getElementById('moodChart');
+        const assessmentResultsEl = document.getElementById('assessment-results');
+        const moodHistoryEl = document.getElementById('mood-history');
+        const toggleSidebarBtn = document.getElementById('toggle-sidebar');
+        const sidebar = document.getElementById('sidebar');
+        const logoutBtn = document.getElementById('logout-btn');
+
+        // API endpoints
+        const API_BASE_URL = 'http://localhost:5000';
+        
+        // Mood labels and colors
+        const moods = [
+            { label: 'Angry', color: '#ff4d4d', emoji: '😠' },
+            { label: 'Disgust', color: '#9933ff', emoji: '🤢' },
+            { label: 'Fear', color: '#ff9933', emoji: '😨' },
+            { label: 'Happy', color: '#00cc66', emoji: '😄' },
+            { label: 'Neutral', color: '#6699ff', emoji: '😐' },
+            { label: 'Sad', color: '#6666ff', emoji: '😢' },
+            { label: 'Surprise', color: '#ffcc00', emoji: '😲' }
+        ];
+
+        // Initialize the dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set current date
+            const now = new Date();
+            currentDateEl.textContent = now.toLocaleDateString('en-US', { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+            
+            // Check login status and load user data
+            const authToken = localStorage.getItem('authToken');
+            const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+            
+            if (!authToken) {
+                // Redirect to login if not authenticated
+                window.location.href = 'index.html';
+                return;
+            }
+            
+            // Set user name
+            const fullName = `${userData.firstName || ''} ${userData.lastName || ''}`.trim();
+            userNameEl.textContent = fullName || 'User';
+            
+            // Load dashboard data
+            loadMoodData();
+            loadAssessmentData();
+            
+            // Set up event listeners
+            toggleSidebarBtn.addEventListener('click', toggleSidebar);
+            
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    handleLogout();
+                });
+            }
+        });
+
+        // Toggle sidebar on mobile
+        function toggleSidebar() {
+            sidebar.style.width = sidebar.style.width === '250px' ? '0' : '250px';
+        }
+
+        // Handle logout
+        function handleLogout() {
+            // Clear authentication data
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('userData');
+            
+            // Redirect to home page
+            window.location.href = 'index.html';
+        }
+
+        // Load mood data from API
+        async function loadMoodData() {
+            try {
+                const authToken = localStorage.getItem('authToken');
+                const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+                
+                let url = `${API_BASE_URL}/api/moods`;
+                if (authToken && userData.email) {
+                    url += `?userId=${encodeURIComponent(userData.email)}`;
+                }
+                
+                const response = await fetch(url);
+                
+                if (!response.ok) {
+                    throw new Error('Failed to load mood data');
+                }
+                
+                const moodData = await response.json();
+                
+                // Process mood data for chart
+                processMoodData(moodData);
+                
+                // Update mood history
+                updateMoodHistory(moodData);
+                
+            } catch (error) {
+                console.error('Error loading mood data:', error);
+                // Display sample data if API fails
+                displaySampleMoodData();
+            }
+        }
+
+        // Process mood data for chart
+        function processMoodData(moodData) {
+            // Group by date and calculate average mood for each day
+            const dailyAverages = {};
+            
+            moodData.forEach(entry => {
+                const date = new Date(entry.createdAt).toLocaleDateString();
+                if (!dailyAverages[date]) {
+                    dailyAverages[date] = {
+                        total: 0,
+                        count: 0
+                    };
+                }
+                
+                dailyAverages[date].total += entry.mood;
+                dailyAverages[date].count++;
+            });
+            
+            // Prepare chart data
+            const labels = [];
+            const data = [];
+            
+            for (const date in dailyAverages) {
+                labels.push(date);
+                data.push(dailyAverages[date].total / dailyAverages[date].count);
+            }
+            
+            // Limit to last 7 days
+            const recentLabels = labels.slice(-7);
+            const recentData = data.slice(-7);
+            
+            // Calculate overall average mood
+            const totalMood = data.reduce((sum, value) => sum + value, 0);
+            const avgMood = (totalMood / data.length).toFixed(1);
+            document.getElementById('avg-mood').textContent = avgMood || '0.0';
+            
+            // Create or update chart
+            createMoodChart(recentLabels, recentData);
+        }
+
+        // Create mood chart
+        function createMoodChart(labels, data) {
+            const ctx = moodChartEl.getContext('2d');
+            
+            if (window.moodChartInstance) {
+                window.moodChartInstance.destroy();
+            }
+            
+            window.moodChartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Mood Level',
+                        data: data,
+                        backgroundColor: 'rgba(75, 108, 183, 0.2)',
+                        borderColor: 'rgba(75, 108, 183, 1)',
+                        borderWidth: 2,
+                        pointBackgroundColor: function(context) {
+                            const value = context.dataset.data[context.dataIndex];
+                            return moods[Math.round(value)]?.color || '#ccc';
+                        },
+                        pointRadius: 6,
+                        pointHoverRadius: 8,
+                        tension: 0.3,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 6,
+                            ticks: {
+                                callback: function(value) {
+                                    return moods[value]?.label || '';
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return moods[Math.round(context.raw)]?.label || 'Unknown';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Update mood history list
+        function updateMoodHistory(moodData) {
+            // Get recent entries (last 5)
+            const recentMoods = moodData.slice(-5).reverse();
+            
+            moodHistoryEl.innerHTML = '';
+            
+            if (recentMoods.length === 0) {
+                moodHistoryEl.innerHTML = '<div class="mood-item">No mood entries yet</div>';
+                return;
+            }
+            
+            recentMoods.forEach(entry => {
+                const moodItem = document.createElement('div');
+                moodItem.className = 'mood-item';
+                
+                const mood = moods[entry.mood];
+                const time = new Date(entry.createdAt).toLocaleTimeString([], { 
+                    hour: '2-digit', 
+                    minute: '2-digit' 
+                });
+                
+                moodItem.innerHTML = `
+                    <div class="mood-info">
+                        <span class="mood-emoji">${mood?.emoji || '😐'}</span>
+                        <span>${mood?.label || 'Neutral'}</span>
+                    </div>
+                    <div class="mood-time">${time}</div>
+                `;
+                
+                moodHistoryEl.appendChild(moodItem);
+            });
+        }
+
+        // Load assessment data from API
+        async function loadAssessmentData() {
+            try {
+                const authToken = localStorage.getItem('authToken');
+                const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+                
+                let url = `${API_BASE_URL}/api/assessments`;
+                if (authToken && userData.email) {
+                    url += `?userId=${encodeURIComponent(userData.email)}`;
+                }
+                
+                const response = await fetch(url);
+                
+                if (!response.ok) {
+                    throw new Error('Failed to load assessment data');
+                }
+                
+                const assessmentData = await response.json();
+                
+                // Update assessment count
+                document.getElementById('assessment-count').textContent = assessmentData.length;
+                
+                // Process assessment data
+                processAssessmentData(assessmentData);
+                
+            } catch (error) {
+                console.error('Error loading assessment data:', error);
+                // Display sample data if API fails
+                displaySampleAssessmentData();
+            }
+        }
+
+        // Process assessment data
+        function processAssessmentData(assessmentData) {
+            // Get the most recent assessment
+            const recentAssessment = assessmentData[assessmentData.length - 1];
+            
+            if (!recentAssessment) {
+                assessmentResultsEl.innerHTML = '<div class="assessment-card">No assessments yet</div>';
+                return;
+            }
+            
+            // Display assessment results
+            assessmentResultsEl.innerHTML = `
+                <div class="assessment-card">
+                    <div class="assessment-score">${recentAssessment.phq9Score || 0}</div>
+                    <div class="assessment-label">PHQ-9</div>
+                    <div class="assessment-status ${getSeverityClass(recentAssessment.phq9Score, 'phq9')}">
+                        ${getSeverityText(recentAssessment.phq9Score, 'phq9')}
+                    </div>
+                </div>
+                
+                <div class="assessment-card">
+                    <div class="assessment-score">${recentAssessment.gad7Score || 0}</div>
+                    <div class="assessment-label">GAD-7</div>
+                    <div class="assessment-status ${getSeverityClass(recentAssessment.gad7Score, 'gad7')}">
+                        ${getSeverityText(recentAssessment.gad7Score, 'gad7')}
+                    </div>
+                </div>
+                
+                <div class="assessment-card">
+                    <div class="assessment-score">${recentAssessment.ghq12Score || 0}</div>
+                    <div class="assessment-label">GHQ-12</div>
+                    <div class="assessment-status ${getSeverityClass(recentAssessment.ghq12Score, 'ghq12')}">
+                        ${getSeverityText(recentAssessment.ghq12Score, 'ghq12')}
+                    </div>
+                </div>
+            `;
+        }
+
+        // Get severity class based on score
+        function getSeverityClass(score, type) {
+            if (!score) return 'status-low';
+            
+            if (type === 'phq9' || type === 'gad7') {
+                if (score <= 4) return 'status-low';
+                if (score <= 9) return 'status-moderate';
+                return 'status-high';
+            }
+            
+            if (type === 'ghq12') {
+                if (score <= 3) return 'status-low';
+                if (score <= 7) return 'status-moderate';
+                return 'status-high';
+            }
+            
+            return 'status-low';
+        }
+
+        // Get severity text based on score
+        function getSeverityText(score, type) {
+            if (!score) return 'No data';
+            
+            if (type === 'phq9') {
+                if (score <= 4) return 'Minimal';
+                if (score <= 9) return 'Mild';
+                if (score <= 14) return 'Moderate';
+                if (score <= 19) return 'Moderately Severe';
+                return 'Severe';
+            }
+            
+            if (type === 'gad7') {
+                if (score <= 4) return 'Minimal';
+                if (score <= 9) return 'Mild';
+                if (score <= 14) return 'Moderate';
+                return 'Severe';
+            }
+            
+            if (type === 'ghq12') {
+                if (score <= 3) return 'Low';
+                if (score <= 7) return 'Medium';
+                return 'High';
+            }
+            
+            return 'No data';
+        }
+
+        // Display sample mood data (fallback)
+        function displaySampleMoodData() {
+            const sampleLabels = [];
+            const sampleData = [];
+            
+            // Generate sample data for last 7 days
+            for (let i = 6; i >= 0; i--) {
+                const date = new Date();
+                date.setDate(date.getDate() - i);
+                sampleLabels.push(date.toLocaleDateString());
+                sampleData.push(Math.floor(Math.random() * 7)); // Random mood value 0-6
+            }
+            
+            // Set average mood
+            const avgMood = (sampleData.reduce((a, b) => a + b, 0) / sampleData.length).toFixed(1);
+            document.getElementById('avg-mood').textContent = avgMood;
+            
+            // Create chart with sample data
+            createMoodChart(sampleLabels, sampleData);
+            
+            // Create sample mood history
+            const sampleHistory = [];
+            for (let i = 0; i < 5; i++) {
+                sampleHistory.push({
+                    mood: Math.floor(Math.random() * 7),
+                    createdAt: new Date(Date.now() - (i * 2 * 60 * 60 * 1000)).toISOString()
+                });
+            }
+            
+            updateMoodHistory(sampleHistory);
+        }
+
+        // Display sample assessment data (fallback)
+        function displaySampleAssessmentData() {
+            document.getElementById('assessment-count').textContent = '1';
+            
+            assessmentResultsEl.innerHTML = `
+                <div class="assessment-card">
+                    <div class="assessment-score">5</div>
+                    <div class="assessment-label">PHQ-9</div>
+                    <div class="assessment-status status-moderate">Mild</div>
+                </div>
+                
+                <div class="assessment-card">
+                    <div class="assessment-score">3</div>
+                    <div class="assessment-label">GAD-7</div>
+                    <div class="assessment-status status-low">Minimal</div>
+                </div>
+                
+                <div class="assessment-card">
+                    <div class="assessment-score">4</div>
+                    <div class="assessment-label">GHQ-12</div>
+                    <div class="assessment-status status-moderate">Medium</div>
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>

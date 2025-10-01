@@ -1,0 +1,1213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mind Balance Hub</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="script.js"></script>
+    <!-- <link rel="stylesheet" href="checkhealth.css">
+      -->
+    <style>
+                /* Global Styles */
+        :root {
+            --primary-color: #4073c0;
+            --secondary-color: #6b8eba;
+            --accent-color: #5e60ce;
+            --light-color: #f8f9fa;
+            --dark-color: #001835;
+            --success-color: #4ca154;
+            --text-color: #333333;
+            --background-color: #ffffff;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            color: var(--text-color);
+            line-height: 1.6;
+            background-color: var(--background-color);
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        button {
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 2rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background-color: var(--accent-color);
+            border-radius: 10px;
+        }
+
+        /* Button Styles */
+        .btn-primary, .btn-secondary {
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-weight: 500;
+            transition: var(--transition);
+            border: none;
+            outline: none;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+            box-shadow: var(--shadow);
+        }
+
+        .btn-primary:hover {
+            background-color: #3a5a8c;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            padding: 15px 0;
+            margin-bottom: 30px;
+        }
+
+        header .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 0 20px;
+            width: auto;
+            max-width: none;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--primary-color);
+        }
+
+        .logo i {
+            font-size: 24px;
+        }
+
+        .logo h1 {
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+        }
+
+        .nav-links a {
+            font-weight: 500;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            color: var(--primary-color);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--primary-color);
+            transition: var(--transition);
+        }
+
+        .nav-links a:hover::after, .nav-links a.active::after {
+            width: 100%;
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        /* Mood Tracker Button Styles */
+        .mood-tracker-btn {
+            background-color: var(--accent-color);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 30px;
+            font-weight: 500;
+            transition: var(--transition);
+            border: none;
+            outline: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: var(--shadow);
+        }
+
+        .mood-tracker-btn:hover {
+            background-color: #4a4cb7;
+        }
+
+        .mood-tracker-btn i {
+            font-size: 16px;
+        }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+        }
+
+        .hamburger span {
+            width: 25px;
+            height: 3px;
+            background-color: var(--dark-color);
+            border-radius: 5px;
+            transition: var(--transition);
+        }
+
+        /* User Profile Dropdown Styles */
+        .user-profile-dropdown {
+            position: relative;
+        }
+
+        .profile-trigger {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            color: var(--text-color);
+        }
+
+        .avatar-circle {
+            width: 40px;
+            height: 40px;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 500;
+            font-size: 16px;
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            min-width: 200px;
+            display: none;
+            z-index: 10;
+        }
+
+        .dropdown-menu.active {
+            display: block;
+        }
+
+        .dropdown-item {
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-color);
+            transition: var(--transition);
+        }
+
+        .dropdown-item:hover {
+            background-color: var(--light-color);
+            color: var(--primary-color);
+        }
+
+        .dropdown-divider {
+            height: 1px;
+            background-color: #eee;
+            margin: 5px 0;
+        }
+
+/* Assessment Section */
+.assessment-section {
+    padding: 3rem 0;
+}
+
+.card {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15);
+}
+
+.card-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.card-header h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.card-header p {
+    color: #6b7280;
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+.form-wrapper {
+    max-width: 896px;
+    margin: 0 auto;
+    animation: fade-in 0.5s ease-in;
+}
+
+.tabs {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-bottom: 1.5rem;
+}
+
+.tab-button {
+    background-color: #e5e7eb;
+    color: #6b7280;
+    padding: 0.75rem 1.5rem;
+    border-radius: 5px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.tab-button:hover {
+    background: var(--tab-hover-color);
+    color: white;
+}
+
+.tab-button.active {
+    background: var(--active-tab-color);
+    color: white;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.tab-button.active:hover {
+    background: var(--tab-hover-color);
+    color: white;
+}
+
+.tab-content {
+    padding: 1rem;
+}
+
+.tab-content.hidden {
+    display: none;
+}
+
+.question-container {
+    margin-bottom: 2rem; /* Gap between questions */
+}
+
+.question-container p {
+    font-size: 1rem;
+    font-weight: 500;
+    margin-bottom: 1rem; /* Gap between question text and options */
+}
+
+.option-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem; /* Gap between options */
+}
+
+.option-group label {
+    font-size: 0.875rem;
+    color: var(--text-color);
+    display: flex;
+    align-items: center;
+}
+
+input[type="radio"] {
+    appearance: none;
+    width: 1rem;
+    height: 1rem;
+    border-radius: 50%;
+    border: 2px solid #6b48ff;
+    background-color: transparent;
+    cursor: pointer;
+    margin-right: 0.5rem;
+}
+
+input[type="radio"]:checked::before {
+    content: '';
+    display: block;
+    width: 0.6rem;
+    height: 0.6rem;
+    border-radius: 50%;
+    background-color: #6b48ff;
+    position: relative;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* Results Section */
+.results-wrapper {
+    max-width: 896px;
+    margin: 0 auto;
+}
+
+.results-wrapper.hidden {
+    display: none;
+}
+
+.scores-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    text-align: center;
+}
+
+.scores-grid div {
+    background: #f9fafb;
+    padding: 1rem;
+    border-radius: 5px;
+    font-size: 1rem;
+    color: var(--text-color);
+}
+
+.scores-grid h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.scores-grid p {
+    font-size: 0.9rem;
+    color: #6b7280;
+}
+
+.disclaimer {
+    font-size: 0.875rem;
+    color: #6b7280;
+    padding-top: 1rem;
+}
+
+.suggestions {
+    margin-top: 2rem;
+}
+
+.suggestions h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.suggestions ul {
+    list-style: disc;
+    padding-left: 1.5rem;
+}
+
+.suggestions li {
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+    color: var(--text-color);
+}
+
+.reset-button {
+    text-align: center;
+    padding-top: 1rem;
+}
+
+/* Footer Section */
+footer {
+    background: #2d3748;
+    color: white;
+    padding: 3rem 0;
+}
+
+.footer-top {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.footer-column h3 {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+}
+
+.footer-column ul li {
+    margin-bottom: 0.5rem;
+}
+
+.footer-column ul li a,
+.footer-column ul li {
+    color: #e0e7ff;
+    font-size: 0.9rem;
+}
+
+.footer-column ul li a:hover {
+    color: white;
+}
+
+.social-icons {
+    display: flex;
+    gap: 1rem;
+}
+
+.social-icons a {
+    color: white;
+    font-size: 1.2rem;
+    transition: var(--transition);
+}
+
+.social-icons a:hover {
+    color: #6b48ff;
+}
+
+.footer-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid #4a5568;
+    padding-top: 1rem;
+}
+
+.footer-links a {
+    color: #e0e7ff;
+    margin-left: 1rem;
+}
+
+.footer-links a:hover {
+    color: white;
+}
+
+/* Animations */
+@keyframes fade-in {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.animate-spin {
+    animation: spin 1s linear infinite;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .nav-links {
+        display: none;
+        flex-direction: column;
+        position: absolute;
+        top: 70px;
+        left: 0;
+        width: 100%;
+        background: #6b48ff;
+        padding: 1rem;
+    }
+
+    .nav-links.active {
+        display: flex;
+    }
+
+    .hamburger {
+        display: flex;
+    }
+
+    .auth-buttons {
+        display: none;
+    }
+
+    .tabs {
+        grid-template-columns: 1fr;
+    }
+
+    .tab-button {
+        padding: 0.5rem;
+    }
+
+    .scores-grid {
+        grid-template-columns: 1fr;
+    }
+}
+    </style>
+</head>
+<body>
+    <!-- Header Section from navbar.html -->
+    <header>
+        <div class="container">
+            <div class="logo">
+                <i class="fas fa-brain"></i>
+                <h1>MindSpace</h1>
+            </div>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="#home" class="active">Home</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#services">Services</a></li>
+                    <li><a href="#resources">Resources</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </nav>
+            <div style="display: flex; gap: 15px; align-items: center;">
+               
+                
+                <!-- Auth buttons container - will be hidden when logged in -->
+                <div class="auth-buttons-container" style="display: none;">
+                    <div class="auth-buttons">
+                        <button class="btn-secondary">Login</button>
+                        <button class="btn-primary">Register</button>
+                    </div>
+                </div>
+                
+                <!-- User profile dropdown - initially hidden, shown when logged in -->
+                <div class="user-profile-dropdown" style="display: none;">
+                    <div class="profile-trigger" id="profile-trigger">
+                        <div class="avatar-circle" id="header-avatar">U</div>
+                        <span id="header-username">User</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="dropdown-menu" id="profile-dropdown">
+                        <a href="dashboard.html" class="dropdown-item">
+                            <i class="fas fa-tachometer-alt"></i> Dashboard
+                        </a>
+                        <a href="#profile" class="dropdown-item">
+                            <i class="fas fa-user"></i> Profile
+                        </a>
+                        <a href="#settings" class="dropdown-item">
+                            <i class="fas fa-cog"></i> Settings
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <a href="#" id="logout-btn" class="dropdown-item">
+                            <i class="fas fa-sign-out-alt"></i> Sign Out
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container">
+        <section id="assessment" class="assessment-section">
+            <div id="form-container" class="form-wrapper">
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Mental Wellness Check-in</h2>
+                        <p>Your answers are private and will help us suggest personalized resources based on how often you've been bothered by certain problems over the last 2 weeks.</p>
+                    </div>
+                    <div class="card-body">
+                        <div class="tabs">
+                            <button id="phq9-trigger" class="tab-button active" data-tab="phq9">PHQ-9 (Depression)</button>
+                            <button id="gad7-trigger" class="tab-button" data-tab="gad7">GAD-7 (Anxiety)</button>
+                            <button id="ghq12-trigger" class="tab-button" data-tab="ghq12">GHQ-12 (Well-being)</button>
+                            <button id="basic-trigger" class="tab-button" data-tab="basic">Basic Questions</button>
+                            <button id="additional-trigger" class="tab-button" data-tab="additional">Additional Questions</button>
+                        </div>
+                        <div id="phq9" class="tab-content"></div>
+                        <div id="gad7" class="tab-content hidden"></div>
+                        <div id="ghq12" class="tab-content hidden"></div>
+                        <div id="basic" class="tab-content hidden"></div>
+                        <div id="additional" class="tab-content hidden"></div>
+                        <button id="submit-btn" class="button-primary full-width" disabled>Get My Suggestions</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="results-container" class="results-wrapper hidden">
+                <div id="results" class="card">
+                    <div class="card-header">
+                        <h2>Your Results</h2>
+                        <p>Here is a summary of your wellness check-in.</p>
+                    </div>
+                    <div class="card-body">
+                        <div id="scores-grid" class="scores-grid"></div>
+                        <p class="disclaimer"><strong>Disclaimer:</strong> This is not a medical diagnosis. These results are for informational purposes only. If you are concerned about your mental health, please consult a healthcare professional.</p>
+                    </div>
+                </div>
+                <div id="suggestions" class="suggestions"></div>
+                <div class="reset-button">
+                    <button onclick="resetApp()" class="button-secondary">Take the assessment again</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer Section -->
+    <footer id="contact">
+        <div class="container">
+            <div class="footer-top">
+                <div class="footer-column">
+                    <div class="logo">
+                        <i class="fas fa-brain"></i>
+                        <h2>Mind Balance Hub</h2>
+                    </div>
+                    <p>Supporting mental health and well-being for students across educational institutions.</p>
+                </div>
+                <div class="footer-column">
+                    <h3>Contact Us</h3>
+                    <ul>
+                        <li><i class="fas fa-envelope"></i> support@mindbalance.edu</li>
+                        <li><i class="fas fa-phone"></i> Helpline: 1800-123-4567</li>
+                        <li><i class="fas fa-map-marker-alt"></i> India</li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Connect With Us</h3>
+                    <div class="social-icons">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 MindSpace. All rights reserved.</p>
+                <div class="footer-links">
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Terms of Service</a>
+                    <a href="#">Emergency Resources</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+    // Question sets
+    const phq9Questions = [
+        "Little interest or pleasure in doing things",
+        "Feeling down, depressed, or hopeless",
+        "Trouble falling or staying asleep, or sleeping too much",
+        "Feeling tired or having little energy",
+        "Poor appetite or overeating",
+        "Feeling bad about yourself — or that you are a failure or have let yourself or your family down",
+        "Trouble concentrating on things, such as reading the newspaper or watching television",
+        "Moving or speaking so slowly that other people could have noticed? Or the opposite — being so fidgety or restless that you have been moving around a lot more than usual",
+        "Thoughts that you would be better off dead or of hurting yourself in some way"
+    ];
+
+    const gad7Questions = [
+        "Feeling nervous, anxious, or on edge",
+        "Not being able to stop or control worrying",
+        "Worrying too much about different things",
+        "Trouble relaxing",
+        "Being so restless that it's hard to sit still",
+        "Becoming easily annoyed or irritable",
+        "Feeling afraid as if something awful might happen"
+    ];
+
+    const ghq12Questions = [
+        "Been able to concentrate on whatever you're doing?",
+        "Lost much sleep over worry?",
+        "Felt that you are playing a useful part in things?",
+        "Felt capable of making decisions about things?",
+        "Felt constantly under strain?",
+        "Felt you couldn't overcome your difficulties?",
+        "Been able to enjoy your normal day-to-day activities?",
+        "Been able to face up to your problems?",
+        "Been feeling unhappy and depressed?",
+        "Been losing confidence in yourself?",
+        "Been thinking of yourself as a worthless person?",
+        "Been feeling reasonably happy, all things considered?"
+    ];
+
+    const basicQuestions = [
+        "How much time do you spend on daily exercise?",
+        "How much time do you spend sleeping daily?",
+        "Are you following any specific diet?",
+        "Do you consume alcohol?",
+        "Do you smoke?"
+    ];
+
+    const additionalQuestions = [
+        "Do you experience family conflicts?",
+        "How do you feel when talking with strangers and friends?",
+        "How much average time do you spend on screens daily?",
+        "Do you feel academic pressure?",
+        "Do you feel career pressure?"
+    ];
+
+    const options = [
+        { label: "Not at all", value: 0 },
+        { label: "Several days", value: 1 },
+        { label: "More than half the days", value: 2 },
+        { label: "Nearly every day", value: 3 }
+    ];
+
+    const basicOptions = [
+        { question: 0, options: [
+            { label: "None", value: 3 },
+            { label: "Less than 30 minutes", value: 2 },
+            { label: "30-60 minutes", value: 1 },
+            { label: "More than 60 minutes", value: 0 }
+        ]},
+        { question: 1, options: [
+            { label: "Less than 6 hours", value: 3 },
+            { label: "6-7 hours", value: 2 },
+            { label: "7-8 hours", value: 1 },
+            { label: "More than 8 hours", value: 0 }
+        ]},
+        { question: 2, options: [
+            { label: "No specific diet", value: 2 },
+            { label: "Balanced diet", value: 0 },
+            { label: "Restrictive diet", value: 3 },
+            { label: "Other", value: 1 }
+        ]},
+        { question: 3, options: [
+            { label: "Never", value: 0 },
+            { label: "Occasionally", value: 1 },
+            { label: "Regularly", value: 2 },
+            { label: "Daily", value: 3 }
+        ]},
+        { question: 4, options: [
+            { label: "Never", value: 0 },
+            { label: "Occasionally", value: 1 },
+            { label: "Regularly", value: 2 },
+            { label: "Daily", value: 3 }
+        ]}
+    ];
+
+    const additionalOptions = [
+        { question: 0, options: [
+            { label: "Never", value: 0 },
+            { label: "Occasionally", value: 1 },
+            { label: "Frequently", value: 2 },
+            { label: "Constantly", value: 3 }
+        ]},
+        { question: 1, options: [
+            { label: "Very comfortable", value: 0 },
+            { label: "Somewhat comfortable", value: 1 },
+            { label: "Somewhat uncomfortable", value: 2 },
+            { label: "Very uncomfortable", value: 3 }
+        ]},
+        { question: 2, options: [
+            { label: "Less than 2 hours", value: 0 },
+            { label: "2-4 hours", value: 1 },
+            { label: "4-6 hours", value: 2 },
+            { label: "More than 6 hours", value: 3 }
+        ]},
+        { question: 3, options: [
+            { label: "Never", value: 0 },
+            { label: "Occasionally", value: 1 },
+            { label: "Frequently", value: 2 },
+            { label: "Constantly", value: 3 }
+        ]},
+        { question: 4, options: [
+            { label: "Never", value: 0 },
+            { label: "Occasionally", value: 1 },
+            { label: "Frequently", value: 2 },
+            { label: "Constantly", value: 3 }
+        ]}
+    ];
+
+    // Scoring and suggestion logic
+    const scoringRules = {
+        phq9: {
+            maxScore: 27,
+            thresholds: [
+                { max: 4, severity: "Minimal depression", suggestions: [
+                    "Practice self-care routines like regular exercise or mindfulness.",
+                    "Engage in hobbies or activities you enjoy.",
+                    "Connect with friends or family for support."
+                ]},
+                { max: 9, severity: "Mild depression", suggestions: [
+                    "Consider mindfulness or relaxation techniques.",
+                    "Reach out to a trusted friend or counselor.",
+                    "Maintain a healthy sleep and diet routine."
+                ]},
+                { max: 14, severity: "Moderate depression", suggestions: [
+                    "Speak with a counselor or therapist for support.",
+                    "Explore cognitive behavioral therapy (CBT) resources.",
+                    "Monitor your symptoms and consider professional help."
+                ]},
+                { max: 19, severity: "Moderately severe depression", suggestions: [
+                    "Seek professional help from a therapist or psychiatrist.",
+                    "Consider structured therapy like CBT or medication options.",
+                    "Reach out to a helpline if feeling overwhelmed."
+                ]},
+                { max: 27, severity: "Severe depression", suggestions: [
+                    "Contact a mental health professional immediately.",
+                    "Call a helpline (e.g., 1800-123-4567) for urgent support.",
+                    "Inform a trusted person about your feelings."
+                ]}
+            ]
+        },
+        gad7: {
+            maxScore: 21,
+            thresholds: [
+                { max: 4, severity: "Minimal anxiety", suggestions: [
+                    "Practice deep breathing or meditation daily.",
+                    "Engage in light physical activity like walking.",
+                    "Maintain a balanced lifestyle with adequate rest."
+                ]},
+                { max: 9, severity: "Mild anxiety", suggestions: [
+                    "Try mindfulness apps or guided relaxation.",
+                    "Talk to a friend or counselor about your worries.",
+                    "Establish a routine to reduce stress."
+                ]},
+                { max: 14, severity: "Moderate anxiety", suggestions: [
+                    "Consult a therapist for anxiety management strategies.",
+                    "Explore CBT or other therapy options.",
+                    "Practice stress-reduction techniques regularly."
+                ]},
+                { max: 21, severity: "Severe anxiety", suggestions: [
+                    "Seek immediate help from a mental health professional.",
+                    "Contact a helpline (e.g., 1800-123-4567) for support.",
+                    "Share your feelings with a trusted person."
+                ]}
+            ]
+        },
+        ghq12: {
+            maxScore: 36,
+            thresholds: [
+                { max: 12, severity: "Low distress", suggestions: [
+                    "Continue maintaining a balanced lifestyle.",
+                    "Engage in activities that promote well-being.",
+                    "Stay connected with supportive people."
+                ]},
+                { max: 24, severity: "Moderate distress", suggestions: [
+                    "Practice stress management techniques like yoga or meditation.",
+                    "Consider speaking with a counselor for support.",
+                    "Focus on self-care and stress reduction."
+                ]},
+                { max: 36, severity: "High distress", suggestions: [
+                    "Seek professional mental health support immediately.",
+                    "Contact a helpline (e.g., 1800-123-4567) for assistance.",
+                    "Discuss your feelings with a trusted person."
+                ]}
+            ]
+        },
+        basic: {
+            maxScore: 15,
+            thresholds: [
+                { max: 5, severity: "Healthy lifestyle", suggestions: [
+                    "Maintain your current healthy habits.",
+                    "Continue regular exercise and balanced diet.",
+                    "Stay connected with supportive communities."
+                ]},
+                { max: 10, severity: "Moderate lifestyle concerns", suggestions: [
+                    "Consider increasing exercise to 30-60 minutes daily.",
+                    "Aim for 7-8 hours of sleep per night.",
+                    "Reduce alcohol or smoking if applicable."
+                ]},
+                { max: 15, severity: "Unhealthy lifestyle", suggestions: [
+                    "Consult a healthcare professional for lifestyle changes.",
+                    "Seek support to reduce alcohol or smoking habits.",
+                    "Establish a routine for exercise and sleep."
+                ]}
+            ]
+        },
+        additional: {
+            maxScore: 15,
+            thresholds: [
+                { max: 5, severity: "Low social/stress concerns", suggestions: [
+                    "Continue building strong social connections.",
+                    "Maintain a balanced approach to screen time.",
+                    "Engage in stress-relief activities."
+                ]},
+                { max: 10, severity: "Moderate social/stress concerns", suggestions: [
+                    "Practice social skills through small interactions.",
+                    "Limit screen time to under 4 hours daily.",
+                    "Seek support for academic or career stress."
+                ]},
+                { max: 15, severity: "High social/stress concerns", suggestions: [
+                    "Consult a counselor for family or social issues.",
+                    "Reduce screen time and prioritize offline activities.",
+                    "Seek professional help for academic or career pressure."
+                ]}
+            ]
+        }
+    };
+
+    // Containers and triggers
+    const containers = {
+        phq9: document.getElementById('phq9'),
+        gad7: document.getElementById('gad7'),
+        ghq12: document.getElementById('ghq12'),
+        basic: document.getElementById('basic'),
+        additional: document.getElementById('additional')
+    };
+
+    const triggers = {
+        phq9: document.getElementById('phq9-trigger'),
+        gad7: document.getElementById('gad7-trigger'),
+        ghq12: document.getElementById('ghq12-trigger'),
+        basic: document.getElementById('basic-trigger'),
+        additional: document.getElementById('additional-trigger')
+    };
+
+    const submitBtn = document.getElementById('submit-btn');
+    let activeTab = 'phq9';
+
+    // Function to generate questions for a given container
+    function generateQuestions(questions, containerId, container, customOptions = null) {
+        container.innerHTML = ''; // Clear previous content
+        questions.forEach((question, index) => {
+            const questionDiv = document.createElement('div');
+            questionDiv.className = 'question-container';
+
+            const questionLabel = document.createElement('p');
+            questionLabel.className = 'question-text';
+            questionLabel.textContent = `${index + 1}. ${question}`;
+            questionDiv.appendChild(questionLabel);
+
+            const optionsDiv = document.createElement('div');
+            optionsDiv.className = 'option-group';
+
+            const opts = customOptions && customOptions[index] ? customOptions[index].options : options;
+
+            opts.forEach((option, optIndex) => {
+                const input = document.createElement('input');
+                input.type = 'radio';
+                input.name = `${containerId}-question-${index}`;
+                input.value = option.value;
+                input.id = `${containerId}-${index}-${optIndex}`;
+                input.className = 'radio-input';
+                input.required = true;
+
+                const label = document.createElement('label');
+                label.htmlFor = input.id;
+                label.className = 'option-label';
+                label.textContent = option.label;
+
+                const optionWrapper = document.createElement('div');
+                optionWrapper.className = 'option-wrapper';
+                optionWrapper.appendChild(input);
+                optionWrapper.appendChild(label);
+
+                optionsDiv.appendChild(optionWrapper);
+            });
+
+            questionDiv.appendChild(optionsDiv);
+            container.appendChild(questionDiv);
+        });
+    }
+
+    // Function to check if all questions in the active tab are answered
+    function checkAllAnswered() {
+        const activeContainer = containers[activeTab];
+        const questionsCount = activeTab === 'phq9' ? phq9Questions.length :
+                              activeTab === 'gad7' ? gad7Questions.length :
+                              activeTab === 'ghq12' ? ghq12Questions.length :
+                              activeTab === 'basic' ? basicQuestions.length :
+                              additionalQuestions.length;
+        const allAnswered = Array.from({ length: questionsCount }).every((_, index) =>
+            activeContainer.querySelector(`input[name="${activeTab}-question-${index}"]:checked`)
+        );
+        submitBtn.disabled = !allAnswered;
+    }
+
+    // Function to calculate score and get severity/suggestions
+    function calculateResults() {
+        const activeContainer = containers[activeTab];
+        const questionsCount = activeTab === 'phq9' ? phq9Questions.length :
+                              activeTab === 'gad7' ? gad7Questions.length :
+                              activeTab === 'ghq12' ? ghq12Questions.length :
+                              activeTab === 'basic' ? basicQuestions.length :
+                              additionalQuestions.length;
+        let score = 0;
+
+        for (let i = 0; i < questionsCount; i++) {
+            const selected = activeContainer.querySelector(`input[name="${activeTab}-question-${i}"]:checked`);
+            if (selected) {
+                score += parseInt(selected.value);
+            }
+        }
+
+        const rules = scoringRules[activeTab];
+        const result = rules.thresholds.find(threshold => score <= threshold.max) || rules.thresholds[rules.thresholds.length - 1];
+
+        return {
+            score,
+            severity: result.severity,
+            suggestions: result.suggestions
+        };
+    }
+
+    // Function to display results
+    function displayResults() {
+        const { score, severity, suggestions } = calculateResults();
+        const scoresGrid = document.getElementById('scores-grid');
+        const suggestionsDiv = document.getElementById('suggestions');
+
+        // Clear previous content
+        scoresGrid.innerHTML = '';
+        suggestionsDiv.innerHTML = '';
+
+        // Display score and severity
+        const scoreDiv = document.createElement('div');
+        scoreDiv.innerHTML = `
+            <h3>${activeTab.toUpperCase()} Score</h3>
+            <p>Score: ${score}</p>
+            <p>Severity: ${severity}</p>
+        `;
+        scoresGrid.appendChild(scoreDiv);
+
+        // Display suggestions
+        const suggestionsHeader = document.createElement('h3');
+        suggestionsHeader.textContent = 'Personalized Suggestions';
+        suggestionsDiv.appendChild(suggestionsHeader);
+
+        const suggestionsList = document.createElement('ul');
+        suggestions.forEach(suggestion => {
+            const li = document.createElement('li');
+            li.textContent = suggestion;
+            suggestionsList.appendChild(li);
+        });
+        suggestionsDiv.appendChild(suggestionsList);
+
+        // Show results container
+        document.getElementById('form-container').classList.add('hidden');
+        document.getElementById('results-container').classList.remove('hidden');
+    }
+
+    // Function to switch tabs
+    function switchTab(tab) {
+        activeTab = tab;
+        Object.keys(containers).forEach(key => {
+            containers[key].classList.add('hidden');
+            triggers[key].classList.remove('active');
+        });
+        containers[tab].classList.remove('hidden');
+        triggers[tab].classList.add('active');
+        checkAllAnswered();
+    }
+
+    // Navbar functionality
+    const hamburger = document.querySelector('.hamburger');
+    const navLinks = document.querySelector('.nav-links');
+
+    hamburger.addEventListener('click', () => {
+        hamburger.classList.toggle('active');
+        navLinks.classList.toggle('active');
+    });
+
+    // Close navbar when a link is clicked
+    navLinks.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => {
+            hamburger.classList.remove('active');
+            navLinks.classList.remove('active');
+        });
+    });
+
+    // Initialize questions for all tabs
+    generateQuestions(phq9Questions, 'phq9', containers.phq9);
+    generateQuestions(gad7Questions, 'gad7', containers.gad7);
+    generateQuestions(ghq12Questions, 'ghq12', containers.ghq12);
+    generateQuestions(basicQuestions, 'basic', containers.basic, basicOptions);
+    generateQuestions(additionalQuestions, 'additional', containers.additional, additionalOptions);
+
+    // Set initial tab
+    switchTab('phq9');
+
+    // Add event listeners for tab triggers
+    Object.keys(triggers).forEach(key => {
+        triggers[key].addEventListener('click', () => switchTab(key));
+    });
+
+    // Add change event listener to each container
+    Object.values(containers).forEach(container => {
+        container.addEventListener('change', checkAllAnswered);
+    });
+
+    // Add submit button event listener
+    submitBtn.addEventListener('click', displayResults);
+
+    // Reset app function
+    window.resetApp = function() {
+        Object.values(containers).forEach(container => {
+            container.querySelectorAll('input[type="radio"]').forEach(input => {
+                input.checked = false;
+            });
+        });
+        document.getElementById('results-container').classList.add('hidden');
+        document.getElementById('form-container').classList.remove('hidden');
+        document.getElementById('scores-grid').innerHTML = '';
+        document.getElementById('suggestions').innerHTML = '';
+        switchTab('phq9');
+        submitBtn.disabled = true;
+    };
+});
+    </script>
+</body>
+</html>
