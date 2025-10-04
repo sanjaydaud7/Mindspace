@@ -24,6 +24,12 @@
             --header-height: 70px;
             --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             --transition: all 0.3s ease;
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-500: #6b7280;
+            --gray-700: #374151;
+            --shadow-xl: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.1);
         }
         
         * {
@@ -1139,6 +1145,158 @@
                 padding: 12px 24px;
             }
         }
+        /* Appointment Styles */
+        
+        .loading-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--gray-500);
+        }
+        
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid var(--gray-200);
+            border-top: 4px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+        
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+        
+        .no-data-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--gray-500);
+        }
+        
+        .no-data-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+        
+        .appointment-type-badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+        
+        .type-video-call {
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--primary-color);
+        }
+        
+        .type-phone-call {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success-color);
+        }
+        
+        .type-in-office {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning-color);
+        }
+        
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+        }
+        
+        .modal-overlay.show {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            width: 100%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow-xl);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--gray-200);
+        }
+        
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+        
+        .close-modal {
+            background: var(--gray-100);
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            color: var(--gray-500);
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        
+        .close-modal:hover {
+            background: var(--gray-200);
+            color: var(--gray-700);
+        }
+        
+        .appointment-detail-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .detail-card {
+            background: var(--gray-50);
+            padding: 1rem;
+            border-radius: 8px;
+        }
+        
+        .detail-label {
+            font-size: 0.85rem;
+            color: var(--gray-500);
+            margin-bottom: 0.25rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .detail-value {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--gray-800);
+        }
     </style>
 </head>
 
@@ -1175,7 +1333,7 @@
                     <i class="fas fa-chevron-down ml-auto"></i>
                 </div>
                 <div class="submenu all-roles" id="appointments-menu">
-                    <div class="submenu-item" data-section="schedule">Schedule</div>
+                    <div class="submenu-item" data-section="my-appointments">My Appointments</div>
                     <div class="submenu-item admin-only" data-section="requests">Requests</div>
                     <div class="submenu-item admin-only" data-section="history">History</div>
                 </div>
@@ -1798,34 +1956,79 @@
                     </div>
                 </div>
 
-                <div class="content-section" id="schedule">
+                <div class="content-section" id="my-appointments">
                     <div class="page-title">
-                        <h1>Appointment Schedule</h1>
+                        <h1>All Appointments</h1>
                         <div class="breadcrumb">
-                            <a href="#">Home</a> / <a href="#">Appointments</a> / <span>Schedule</span>
+                            <a href="#">Home</a> / <a href="#">Appointments</a> / <span>All Appointments</span>
                         </div>
                     </div>
 
-                    <div class="date-selector">
-                        <div class="date-display">
-                            <i class="fas fa-calendar-alt"></i>
-                            <span id="current-date">Monday, June 26, 2023</span>
-                        </div>
-                        <div class="date-nav">
-                            <button class="date-nav-btn" id="prev-date">
-                                    <i class="fas fa-chevron-left"></i> Previous
-                                </button>
-                            <button class="date-nav-btn" id="today-date">
-                                    Today
-                                </button>
-                            <button class="date-nav-btn" id="next-date">
-                                    Next <i class="fas fa-chevron-right"></i>
-                                </button>
+                    <div class="form-card">
+                        <h3>Filter Appointments</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Status</label>
+                                <select id="appointment-status-filter">
+                                    <option value="">All Statuses</option>
+                                    <option value="pending">Pending</option>
+                                    <option value="confirmed">Confirmed</option>
+                                    <option value="completed">Completed</option>
+                                    <option value="cancelled">Cancelled</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Date Range</label>
+                                <select id="appointment-date-filter">
+                                    <option value="all">All Dates</option>
+                                    <option value="today">Today</option>
+                                    <option value="week">This Week</option>
+                                    <option value="month">This Month</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Search</label>
+                                <input type="text" id="patient-search" placeholder="Search by patient name, email, or specialist">
+                            </div>
                         </div>
                     </div>
 
-                    <div class="schedule-container" id="schedule-container">
-                        <!-- Dynamically populated -->
+                    <div class="table-card">
+                        <div class="table-header">
+                            <h3 id="appointments-table-title">All Booked Sessions</h3>
+                            <button class="btn btn-primary" id="refresh-appointments">
+                                <i class="fas fa-sync-alt"></i> Refresh
+                            </button>
+                        </div>
+
+                        <div id="appointments-loading" class="loading-state" style="display: none;">
+                            <div class="loading-spinner"></div>
+                            <p>Loading appointments...</p>
+                        </div>
+
+                        <div id="appointments-container">
+                            <table id="appointments-table">
+                                <thead id="appointments-table-head">
+                                    <tr>
+                                        <th>Patient</th>
+                                        <th>Date & Time</th>
+                                        <th>Type</th>
+                                        <th>Status</th>
+                                        <th>Amount</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="appointments-table-body">
+                                    <!-- Dynamic content will be inserted here -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div id="no-appointments" class="no-data-state" style="display: none;">
+                            <i class="fas fa-calendar-times"></i>
+                            <h3>No Appointments Found</h3>
+                            <p>You don't have any appointments matching the current filters.</p>
+                        </div>
                     </div>
                 </div>
 
@@ -2060,17 +2263,20 @@
                             <a href="#">Home</a> / <span>Analytics</span>
                         </div>
                     </div>
+
                     <div class="chart-card">
-                        <div class="chart-header">
-                            <h3>Platform Analytics</h3>
-                            <select>
-                                    <option>Last 7 Days</option>
-                                    <option>Last 30 Days</option>
-                                    <option>Last 90 Days</option>
-                                </select>
-                        </div>
-                        <div class="chart-container">
-                            <canvas id="analytics-chart"></canvas>
+                        <div class="modal-header">
+                            <div class="chart-header">
+                                <h3>Platform Analytics</h3>
+                                <select>
+                                        <option>Last 7 Days</option>
+                                        <option>Last 30 Days</option>
+                                        <option>Last 90 Days</option>
+                                    </select>
+                            </div>
+                            <div class="chart-container">
+                                <canvas id="analytics-chart"></canvas>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -2099,26 +2305,22 @@
                         </div>
 
                         <div class="form-group">
+                            <label>Timezone</label>
+                            <select>
+                                <option>(UTC-08:00) Pacific Time</option>
+                                <option>(UTC-07:00) Mountain Time</option>
+                                <option>(UTC-06:00) Central Time</option>
+                                <option>(UTC-05:00) Eastern Time</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
                             <label>Site Description</label>
                             <textarea rows="3">A safe, confidential space for students to access mental health resources, counseling services, and peer support.</textarea>
                         </div>
-
-                        <div class="form-group">
-                            <label>Timezone</label>
-                            <select>
-                                    <option>(UTC-05:00) Eastern Time</option>
-                                    <option>(UTC-06:00) Central Time</option>
-                                    <option>(UTC-07:00) Mountain Time</option>
-                                    <option>(UTC-08:00) Pacific Time</option>
-                                </select>
-                        </div>
-
                         <button class="btn btn-primary">Save Changes</button>
                     </div>
                 </div>
             </div>
-
-            <div class="sidebar-overlay"></div>
         </div>
 
         <!-- Logout Confirmation Alert -->
@@ -2132,6 +2334,21 @@
                 <div class="logout-alert-buttons">
                     <button class="logout-btn-cancel" id="logout-cancel-btn">Cancel</button>
                     <button class="logout-btn-confirm" id="logout-confirm-btn">Logout</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Appointment Detail Modal -->
+        <div class="modal-overlay" id="appointment-detail-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">Appointment Details</h3>
+                    <button class="close-modal" onclick="closeAppointmentModal()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div id="appointment-detail-content">
+                    <!-- Dynamic content will be inserted here -->
                 </div>
             </div>
         </div>

@@ -3,10 +3,10 @@ const router = express.Router();
 const Appointment = require('../models/Appointment');
 
 // Book a new appointment
-router.post('/book', async (req, res) => {
+router.post('/book', async(req, res) => {
     try {
         console.log('Appointment booking request received:', req.body);
-        
+
         const {
             patientName,
             patientEmail,
@@ -25,7 +25,7 @@ router.post('/book', async (req, res) => {
         } = req.body;
 
         // Validate required fields
-        if (!patientName || !patientEmail || !patientPhone || !specialistId || 
+        if (!patientName || !patientEmail || !patientPhone || !specialistId ||
             !appointmentDate || !appointmentTime || !counselingType) {
             return res.status(400).json({
                 success: false,
@@ -109,7 +109,7 @@ router.post('/book', async (req, res) => {
 });
 
 // Get all appointments (for admin)
-router.get('/all', async (req, res) => {
+router.get('/all', async(req, res) => {
     try {
         const appointments = await Appointment.find()
             .sort({ createdAt: -1 })
@@ -131,10 +131,10 @@ router.get('/all', async (req, res) => {
 });
 
 // Get appointments by patient email
-router.get('/patient/:email', async (req, res) => {
+router.get('/patient/:email', async(req, res) => {
     try {
         const { email } = req.params;
-        
+
         const appointments = await Appointment.find({ patientEmail: email })
             .sort({ appointmentDate: -1 });
 
@@ -154,10 +154,10 @@ router.get('/patient/:email', async (req, res) => {
 });
 
 // Get appointments by specialist
-router.get('/specialist/:specialistId', async (req, res) => {
+router.get('/specialist/:specialistId', async(req, res) => {
     try {
         const { specialistId } = req.params;
-        
+
         const appointments = await Appointment.find({ specialistId: specialistId })
             .sort({ appointmentDate: -1 });
 
@@ -176,8 +176,32 @@ router.get('/specialist/:specialistId', async (req, res) => {
     }
 });
 
+// Get appointments by specialist name
+router.get('/specialist/name/:specialistName', async(req, res) => {
+    try {
+        const { specialistName } = req.params;
+
+        const appointments = await Appointment.find({
+            specialistName: { $regex: specialistName, $options: 'i' }
+        }).sort({ appointmentDate: -1 });
+
+        res.json({
+            success: true,
+            appointments: appointments
+        });
+
+    } catch (error) {
+        console.error('Error fetching specialist appointments by name:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Failed to fetch specialist appointments',
+            error: error.message
+        });
+    }
+});
+
 // Update appointment status
-router.patch('/:appointmentId/status', async (req, res) => {
+router.patch('/:appointmentId/status', async(req, res) => {
     try {
         const { appointmentId } = req.params;
         const { status } = req.body;
@@ -190,9 +214,7 @@ router.patch('/:appointmentId/status', async (req, res) => {
         }
 
         const updatedAppointment = await Appointment.findByIdAndUpdate(
-            appointmentId,
-            { status, updatedAt: Date.now() },
-            { new: true }
+            appointmentId, { status, updatedAt: Date.now() }, { new: true }
         );
 
         if (!updatedAppointment) {
@@ -219,10 +241,10 @@ router.patch('/:appointmentId/status', async (req, res) => {
 });
 
 // Get appointment by ID
-router.get('/:appointmentId', async (req, res) => {
+router.get('/:appointmentId', async(req, res) => {
     try {
         const { appointmentId } = req.params;
-        
+
         const appointment = await Appointment.findById(appointmentId);
 
         if (!appointment) {
