@@ -69,7 +69,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api', moodRoutes);
 app.use('/api/profile', profileRoutes);
 app.use('/api/admin', specialistRoutes);
-app.use('/api/admin', adminRoutes);
+app.use('/api/admin', adminRoutes); // This handles /api/admin/users
 app.use('/api/appointments', appointmentRoutes); // Add appointment routes
 
 

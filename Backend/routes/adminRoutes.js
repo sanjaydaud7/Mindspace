@@ -64,13 +64,108 @@ router.get('/profile', protect, getProfile); // Use actual controller function
 router.put('/profile', protect, upload.single('profilePicture'), updateProfileValidation, updateProfile); // Accept 'profilePicture' file
 
 
-// User management routes (if you have them)
+// User management routes - Updated to fetch from both User and Admin collections
 router.get('/users', protect, restrictTo('admin'), async(req, res) => {
     try {
-        // You'll need to create a User model and controller for this
-        res.json({ success: true, users: [] }); // Placeholder
+        console.log('📋 Fetching all users from both User and Admin collections...');
+
+        // Import both User and Admin models
+        let User, Admin;
+        try {
+            User = require('../models/User');
+        } catch (error1) {
+            try {
+                User = require('../models/userModel');
+            } catch (error2) {
+                console.error('❌ Could not import User model:', error1.message, error2.message);
+            }
+        }
+
+        try {
+            Admin = require('../models/adminModel');
+        } catch (error) {
+            try {
+                Admin = require('../models/Admin');
+            } catch (error2) {
+                console.error('❌ Could not import Admin model:', error.message, error2.message);
+            }
+        }
+
+        const allUsers = [];
+
+        // Fetch users from User collection
+        if (User) {
+            const users = await User.find({}).select('-password -resetPasswordToken -resetPasswordExpire -verificationToken -verificationExpire').lean();
+            console.log(`📋 Found ${users.length} users from User collection`);
+
+            const formattedUsers = users.map(user => ({
+                _id: user._id,
+                firstName: user.firstName || '',
+                lastName: user.lastName || '',
+                email: user.email || '',
+                mobile: user.mobile || '',
+                role: user.role || 'user',
+                status: user.status || 'active',
+                createdAt: user.createdAt,
+                isVerified: user.isVerified || false,
+                source: 'user' // To identify the source collection
+            }));
+
+            allUsers.push(...formattedUsers);
+        }
+
+        // Fetch users from Admin collection (counselors, therapists, admins)
+        if (Admin) {
+            const adminUsers = await Admin.find({}).select('-password').lean();
+            console.log(`📋 Found ${adminUsers.length} users from Admin collection`);
+
+            const formattedAdminUsers = adminUsers.map(admin => ({
+                _id: admin._id,
+                firstName: admin.firstName || '',
+                lastName: admin.lastName || '',
+                email: admin.email || '',
+                mobile: admin.mobile || '',
+                role: admin.role || 'admin',
+                status: 'active', // Admin users are typically always active
+                createdAt: admin.createdAt,
+                isVerified: true, // Admin users are typically verified
+                source: 'admin', // To identify the source collection
+                // Additional admin-specific fields
+                bio: admin.bio || '',
+                specialties: admin.specialties || '',
+                experience: admin.experience || 0,
+                qualifications: admin.qualifications || '',
+                languages: admin.languages || '',
+                profilePicture: admin.profilePicture || ''
+            }));
+
+            allUsers.push(...formattedAdminUsers);
+        }
+
+        // Sort all users by creation date (newest first)
+        allUsers.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+        console.log(`✅ Total users found: ${allUsers.length} (${allUsers.filter(u => u.source === 'user').length} from User collection, ${allUsers.filter(u => u.source === 'admin').length} from Admin collection)`);
+
+        res.json({
+            success: true,
+            users: allUsers,
+            count: allUsers.length,
+            breakdown: {
+                regularUsers: allUsers.filter(u => u.role === 'user').length,
+                admins: allUsers.filter(u => u.role === 'admin').length,
+                counselors: allUsers.filter(u => u.role === 'counselor').length,
+                therapists: allUsers.filter(u => u.role === 'therapist').length
+            }
+        });
+
     } catch (error) {
-        res.status(500).json({ message: 'Server error', error: error.message });
+        console.error('❌ Error fetching all users:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Server error while fetching users',
+            error: error.message
+        });
     }
 });
 

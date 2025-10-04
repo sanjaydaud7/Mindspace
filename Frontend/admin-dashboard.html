@@ -1129,22 +1129,6 @@
         .logout-alert-overlay.animate .logout-alert {
             animation: alertFadeIn 0.3s ease-out;
         }
-        /* Responsive adjustments */
-        
-        @media (max-width: 480px) {
-            .logout-alert {
-                padding: 24px 20px;
-                margin: 20px;
-            }
-            .logout-alert-buttons {
-                flex-direction: column;
-            }
-            .logout-btn-cancel,
-            .logout-btn-confirm {
-                width: 100%;
-                padding: 12px 24px;
-            }
-        }
         /* Appointment Styles */
         
         .loading-state {
@@ -1297,6 +1281,330 @@
             font-weight: 600;
             color: var(--gray-800);
         }
+        /* Enhanced User Table Styles */
+        
+        #all-users .table-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(64, 115, 192, 0.1), 0 2px 8px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+            overflow: hidden;
+            border: 1px solid rgba(64, 115, 192, 0.08);
+        }
+        
+        #all-users .table-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid rgba(64, 115, 192, 0.1);
+        }
+        
+        #all-users .table-header h3 {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        #all-users .table-header h3::before {
+            content: '👥';
+            font-size: 24px;
+        }
+        
+        #all-users table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+        }
+        
+        #all-users table thead {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
+        }
+        
+        #all-users table th {
+            padding: 18px 20px;
+            text-align: left;
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border: none;
+            position: relative;
+        }
+        
+        #all-users table th:first-child {
+            border-top-left-radius: 12px;
+        }
+        
+        #all-users table th:last-child {
+            border-top-right-radius: 12px;
+        }
+        
+        #all-users table td {
+            padding: 20px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            vertical-align: middle;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        
+        #all-users table tbody tr {
+            transition: all 0.3s ease;
+            background: white;
+        }
+        
+        #all-users table tbody tr:hover {
+            background: linear-gradient(135deg, rgba(64, 115, 192, 0.02) 0%, rgba(94, 96, 206, 0.02) 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(64, 115, 192, 0.1);
+        }
+        
+        #all-users table tbody tr:last-child td {
+            border-bottom: none;
+        }
+        /* Enhanced Status Badges */
+        
+        #all-users .status {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border: 2px solid transparent;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            min-width: 80px;
+            justify-content: center;
+        }
+        
+        #all-users .status.active::before {
+            content: '●';
+            color: var(--success-color);
+            animation: pulse 2s infinite;
+        }
+        
+        #all-users .status.pending::before {
+            content: '⏳';
+        }
+        
+        #all-users .status.suspended::before {
+            content: '🚫';
+        }
+        
+        #all-users .status.user {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(99, 102, 241, 0.1) 100%);
+            color: #3b82f6;
+            border-color: rgba(59, 130, 246, 0.3);
+        }
+        
+        #all-users .status.counselor {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(5, 150, 105, 0.1) 100%);
+            color: #10b981;
+            border-color: rgba(16, 185, 129, 0.3);
+        }
+        
+        #all-users .status.therapist {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(217, 119, 6, 0.1) 100%);
+            color: #f59e0b;
+            border-color: rgba(245, 158, 11, 0.3);
+        }
+        
+        #all-users .status.admin {
+            background: linear-gradient(135deg, rgba(139, 69, 19, 0.1) 0%, rgba(120, 53, 15, 0.1) 100%);
+            color: #8b4513;
+            border-color: rgba(139, 69, 19, 0.3);
+        }
+        /* Enhanced Action Buttons */
+        
+        #all-users .action-btn {
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        #all-users .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+        }
+        
+        #all-users .view-btn {
+            background: linear-gradient(135deg, rgba(64, 115, 192, 0.1) 0%, rgba(59, 130, 246, 0.1) 100%);
+            color: var(--primary-color);
+            border: 1px solid rgba(64, 115, 192, 0.3);
+        }
+        
+        #all-users .view-btn:hover {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #3b82f6 100%);
+            color: white;
+        }
+        
+        #all-users .edit-btn {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(5, 150, 105, 0.1) 100%);
+            color: #10b981;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+        
+        #all-users .edit-btn:hover {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+        }
+        
+        #all-users .delete-btn {
+            background: linear-gradient(135deg, rgba(244, 67, 54, 0.1) 0%, rgba(239, 68, 68, 0.1) 100%);
+            color: var(--danger-color);
+            border: 1px solid rgba(244, 67, 54, 0.3);
+        }
+        
+        #all-users .delete-btn:hover {
+            background: linear-gradient(135deg, var(--danger-color) 0%, #ef4444 100%);
+            color: white;
+        }
+        /* Enhanced User Info Display */
+        
+        #all-users table td:first-child {
+            min-width: 200px;
+        }
+        
+        #all-users table td:first-child strong {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--dark-color);
+            display: block;
+            margin-bottom: 4px;
+        }
+        
+        #all-users table td:first-child small {
+            font-size: 13px;
+            color: #6b7280;
+            display: block;
+            margin-top: 2px;
+        }
+        /* Email Column Enhancement */
+        
+        #all-users table td:nth-child(2) {
+            min-width: 250px;
+        }
+        
+        #all-users table td:nth-child(2) span {
+            font-weight: 500;
+            color: var(--dark-color);
+        }
+        
+        #all-users table td:nth-child(2) small {
+            font-size: 12px;
+            padding: 4px 8px;
+            border-radius: 12px;
+            margin-top: 4px;
+            display: inline-block;
+            font-weight: 500;
+        }
+        /* Professional Badge Enhancement */
+        
+        #all-users table td:nth-child(2) small[style*="color: #6b8eba"] {
+            background: linear-gradient(135deg, rgba(107, 142, 186, 0.1) 0%, rgba(94, 96, 206, 0.1) 100%);
+            color: #6b8eba !important;
+            border: 1px solid rgba(107, 142, 186, 0.3);
+        }
+        /* Verification Status Enhancement */
+        
+        #all-users table td:nth-child(2) small[style*="color: #4caf50"] {
+            background: linear-gradient(135deg, rgba(76, 175, 80, 0.1) 0%, rgba(56, 142, 60, 0.1) 100%);
+            border: 1px solid rgba(76, 175, 80, 0.3);
+        }
+        
+        #all-users table td:nth-child(2) small[style*="color: #ff9800"] {
+            background: linear-gradient(135deg, rgba(255, 152, 0, 0.1) 0%, rgba(245, 124, 0, 0.1) 100%);
+            border: 1px solid rgba(255, 152, 0, 0.3);
+        }
+        /* Loading and Empty States */
+        
+        #all-users .loading-row td,
+        #all-users .empty-row td {
+            text-align: center;
+            padding: 60px 20px;
+            font-size: 16px;
+            color: #6b7280;
+        }
+        
+        #all-users .loading-row i {
+            font-size: 32px;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+        
+        #all-users .empty-row i {
+            font-size: 48px;
+            margin-bottom: 20px;
+            opacity: 0.3;
+            color: var(--primary-color);
+        }
+        /* Pulse Animation */
+        
+        @keyframes pulse {
+            0%,
+            100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+        /* Mobile Responsiveness for Users Table */
+        
+        @media (max-width: 1200px) {
+            #all-users table td:first-child,
+            #all-users table td:nth-child(2) {
+                min-width: auto;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            #all-users .table-card {
+                padding: 20px;
+                border-radius: 12px;
+            }
+            #all-users table th,
+            #all-users table td {
+                padding: 12px 8px;
+                font-size: 13px;
+            }
+            #all-users .action-btn {
+                padding: 8px 12px;
+                font-size: 11px;
+            }
+            #all-users table td:nth-child(6)>div {
+                flex-direction: column;
+                gap: 8px;
+            }
+            #all-users .action-btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+        /* ...existing code... */
     </style>
 </head>
 
@@ -1602,17 +1910,18 @@
                         <div class="form-row">
                             <div class="form-group">
                                 <label>Role</label>
-                                <select>
-                                        <option value>All Roles</option>
-                                        <option value="student">Student</option>
+                                <select id="user-role-filter">
+                                        <option value="">All Roles</option>
+                                        <option value="user">User</option>
+                                        <option value="counselor">Counselor</option>
                                         <option value="therapist">Therapist</option>
                                         <option value="admin">Admin</option>
                                     </select>
                             </div>
                             <div class="form-group">
                                 <label>Status</label>
-                                <select>
-                                        <option value>All Statuses</option>
+                                <select id="user-status-filter">
+                                        <option value="">All Statuses</option>
                                         <option value="active">Active</option>
                                         <option value="pending">Pending</option>
                                         <option value="suspended">Suspended</option>
@@ -1620,15 +1929,22 @@
                             </div>
                             <div class="form-group">
                                 <label>Search</label>
-                                <input type="text" placeholder="Search by name or email">
+                                <input type="text" id="user-search" placeholder="Search by name or email">
                             </div>
                         </div>
                     </div>
 
                     <div class="table-card">
                         <div class="table-header">
-                            <h3>All Users</h3>
-                            <button class="btn btn-primary" id="add-new-user-btn">Add New User</button>
+                            <h3 id="users-table-title">All Users</h3>
+                            <div style="display: flex; gap: 10px;">
+                                <button class="btn btn-secondary" id="refresh-users-btn">
+                                    <i class="fas fa-sync-alt"></i> Refresh
+                                </button>
+                                <button class="btn btn-primary" id="add-new-user-btn">
+                                    <i class="fas fa-user-plus"></i> Add New User
+                                </button>
+                            </div>
                         </div>
 
                         <table>
@@ -1643,7 +1959,12 @@
                                 </tr>
                             </thead>
                             <tbody id="users-table-body">
-                                <!-- Dynamically populated -->
+                                <tr>
+                                    <td colspan="6" style="text-align:center;padding:40px;color:#666;">
+                                        <i class="fas fa-spinner fa-spin" style="font-size: 24px; margin-bottom: 10px;"></i>
+                                        <br>Loading users...
+                                    </td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>

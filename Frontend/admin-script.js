@@ -744,69 +744,238 @@ document.addEventListener('DOMContentLoaded', function() {
 
             async function loadUsers() {
                 try {
-                    console.log('👥 Loading users...');
-                    const data = await api('/users');
+                    console.log('👥 Loading all users (from both User and Admin collections)...');
 
-                    if (data && data.users) {
+                    // Show loading state
+                    const tbody = byId('users-table-body');
+                    if (tbody) {
+                        tbody.innerHTML = `
+                            <tr>
+                                <td colspan="6" style="text-align:center;padding:40px;color:#666;">
+                                    <i class="fas fa-spinner fa-spin" style="font-size: 24px; margin-bottom: 10px;"></i>
+                                    <br>Loading all users...
+                                </td>
+                            </tr>
+                        `;
+                    }
+
+                    const data = await api('/users');
+                    console.log('📡 Users API response:', data);
+
+                    if (data && data.success && Array.isArray(data.users)) {
                         populateUsersTable(data.users);
-                        console.log(`✅ Loaded ${data.users.length} users`);
+                        console.log(`✅ Loaded ${data.users.length} users total`);
+
+                        // Show breakdown if available
+                        if (data.breakdown) {
+                            console.log('👥 User breakdown:', data.breakdown);
+                        }
+
+                        // Update users count in UI if element exists
+                        const usersCountEl = document.querySelector('.stats-cards .stat-card:first-child .stat-info h3');
+                        if (usersCountEl) {
+                            usersCountEl.textContent = data.users.length.toLocaleString();
+                        }
+
+                        // Update table title with breakdown
+                        notify(`Loaded ${data.users.length} users successfully`, 'success');
                     } else {
+                        console.log('📭 No users found or invalid response:', data);
                         populateUsersTable([]);
+                        notify('No users found in the database', 'info');
                     }
                 } catch (error) {
                     console.error('❌ Users load failed:', error);
                     populateUsersTable([]);
+
+                    // Show detailed error message
+                    const tbody = byId('users-table-body');
+                    if (tbody) {
+                        tbody.innerHTML = `
+                            <tr>
+                                <td colspan="6" style="text-align:center;padding:40px;color:#f44336;">
+                                    <i class="fas fa-exclamation-triangle" style="font-size: 24px; margin-bottom: 10px;"></i>
+                                    <br><strong>Failed to load users</strong>
+                                    <br><small>${error.message}</small>
+                                    <br><br>
+                                    <button class="btn btn-primary" onclick="window.loadUsers()">
+                                        <i class="fas fa-retry"></i> Try Again
+                                    </button>
+                                </td>
+                            </tr>
+                        `;
+                    }
+
+                    // Show specific error messages
+                    if (error.message.includes('User model not found')) {
+                        notify('Database configuration error. Please contact system administrator.', 'error');
+                    } else if (error.message.includes('Network')) {
+                        notify('Network error. Please check your connection and try again.', 'error');
+                    } else {
+                        notify(`Failed to load users: ${error.message}`, 'error');
+                    }
                 }
             }
 
             function populateUsersTable(users) {
                 const tbody = byId('users-table-body');
-                if (!tbody) return;
+                if (!tbody) {
+                    console.error('❌ Users table body not found');
+                    return;
+                }
+
+                if (!Array.isArray(users)) {
+                    console.error('❌ Users data is not an array:', users);
+                    users = [];
+                }
 
                 tbody.innerHTML = users.length ?
-                    users.map(user => `
-                <tr>
-                    <td>${(user.firstName || '') + ' ' + (user.lastName || '')}</td>
-                    <td>${user.email || 'N/A'}</td>
-                    <td><span class="status ${user.role || 'admin'}">${user.role ? user.role.charAt(0).toUpperCase() + user.role.slice(1) : 'Unknown'}</span></td>
-                    <td><span class="status ${user.status || 'active'}">${user.status || 'Active'}</span></td>
-                    <td>${user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A'}</td>
-                    <td>
-                        <button class="action-btn view-btn" data-id="${user._id || ''}">View</button>
-                        <button class="action-btn edit-btn" data-id="${user._id || ''}">Edit</button>
-                        <button class="action-btn delete-btn" data-id="${user._id || ''}">Delete</button>
-                    </td>
-                </tr>
-            `).join('') :
-                    '<tr><td colspan="6" style="text-align:center;padding:20px;color:#666">No users found</td></tr>';
+                    users.map(user => {
+                            const fullName = `${user.firstName || ''} ${user.lastName || ''}`.trim() || 'N/A';
+                            const email = user.email || 'N/A';
+                            const role = user.role ? user.role.charAt(0).toUpperCase() + user.role.slice(1) : 'User';
+                            const status = user.status || 'active';
+                            const joinDate = user.createdAt ? new Date(user.createdAt).toLocaleDateString('en-US', {
+                                year: 'numeric',
+                                month: 'short',
+                                day: 'numeric'
+                            }) : 'N/A';
+                            const userId = user._id || '';
+                            const source = user.source || 'unknown';
 
-                // Bind action buttons
+                            // Status styling
+                            const statusClass = status.toLowerCase();
+                            const statusDisplay = status.charAt(0).toUpperCase() + status.slice(1);
+
+                            // Role-specific styling
+                            let roleClass = role.toLowerCase();
+                            if (role.toLowerCase() === 'counselor') roleClass = 'counselor';
+                            else if (role.toLowerCase() === 'therapist') roleClass = 'therapist';
+                            else if (role.toLowerCase() === 'admin') roleClass = 'admin';
+                            else roleClass = 'user';
+
+                            return `
+                    <tr>
+                        <td>
+                            <div style="display: flex; flex-direction: column;">
+                                <strong>${fullName}</strong>
+                                ${user.mobile ? `<small style="color: #666;">${user.mobile}</small>` : ''}
+                                ${source === 'admin' && (user.specialties || user.bio) ? `<small style="color: #4073c0; font-style: italic;">${user.specialties || user.bio.substring(0, 30) + (user.bio.length > 30 ? '...' : '')}</small>` : ''}
+                            </div>
+                        </td>
+                        <td>
+                            <div style="display: flex; flex-direction: column;">
+                                <span>${email}</span>
+                                ${user.isVerified ? '<small style="color: #4caf50;"><i class="fas fa-check-circle"></i> Verified</small>' : '<small style="color: #ff9800;"><i class="fas fa-clock"></i> Unverified</small>'}
+                                ${source === 'admin' ? '<small style="color: #6b8eba;"><i class="fas fa-shield-alt"></i> Professional</small>' : ''}
+                            </div>
+                        </td>
+                        <td><span class="status ${roleClass}" style="text-transform: capitalize;">${role}</span></td>
+                        <td><span class="status ${statusClass}">${statusDisplay}</span></td>
+                        <td>${joinDate}</td>
+                        <td>
+                            <div style="display: flex; gap: 5px; flex-wrap: wrap;">
+                                <button class="action-btn view-btn" data-id="${userId}" data-source="${source}" title="View Details">
+                                    <i class="fas fa-eye"></i> View
+                                </button>
+                                ${source === 'user' ? `
+                                    <button class="action-btn edit-btn" data-id="${userId}" data-source="${source}" title="Edit User">
+                                        <i class="fas fa-edit"></i> Edit
+                                    </button>
+                                    ${status !== 'suspended' ? `
+                                        <button class="action-btn delete-btn" data-id="${userId}" data-source="${source}" title="Suspend User">
+                                            <i class="fas fa-ban"></i> Suspend
+                                        </button>
+                                    ` : `
+                                        <button class="action-btn edit-btn" data-id="${userId}" data-source="${source}" title="Activate User" style="background-color: rgba(76, 175, 80, 0.1); color: #4caf50;">
+                                            <i class="fas fa-check"></i> Activate
+                                        </button>
+                                    `}
+                                ` : `
+                                    <button class="action-btn view-btn" data-id="${userId}" data-source="${source}" title="View Professional Profile" style="background-color: rgba(94, 96, 206, 0.1); color: #5e60ce;">
+                                        <i class="fas fa-user-md"></i> Profile
+                                    </button>
+                                `}
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                    }).join('') :
+                    `<tr>
+                        <td colspan="6" style="text-align:center;padding:30px;color:#666;font-style:italic;">
+                            <i class="fas fa-users" style="font-size: 48px; margin-bottom: 15px; opacity: 0.3;"></i>
+                            <br><strong>No users found</strong>
+                            <br>Users will appear here once they register on the platform.
+                        </td>
+                    </tr>`;
+
+                // Bind action buttons with improved error handling
                 $$('.action-btn').forEach(btn => {
                     on(btn, 'click', function() {
                         const id = this.dataset.id;
+                        const source = this.dataset.source;
+                        if (!id) {
+                            notify('User ID not found', 'warning');
+                            return;
+                        }
+                        
                         const action = this.classList.contains('view-btn') ? 'view' :
-                            this.classList.contains('edit-btn') ? 'edit' : 'delete';
+                            this.classList.contains('edit-btn') ? 'edit' : 'suspend';
 
-                        handleUserAction(id, action);
+                        handleUserAction(id, action, this, source);
                     });
                 });
+                
+                console.log(`✅ Users table populated with ${users.length} entries`);
             }
 
-            function handleUserAction(id, action) {
-                if (!id) return notify('No user selected', 'warning');
+            function handleUserAction(id, action, buttonElement, source = 'user') {
+                if (!id) {
+                    notify('No user selected', 'warning');
+                    return;
+                }
 
                 switch (action) {
                     case 'view':
-                        notify(`View user ${id} - Coming soon`, 'info');
-                        break;
-                    case 'edit':
-                        notify(`Edit user ${id} - Coming soon`, 'info');
-                        break;
-                    case 'delete':
-                        if (confirm('Delete this user? This cannot be undone.')) {
-                            deleteUser(id);
+                        if (source === 'admin') {
+                            notify(`Viewing professional profile for ID: ${id} - Feature coming soon`, 'info');
+                        } else {
+                            notify(`Viewing user details for ID: ${id} - Feature coming soon`, 'info');
                         }
                         break;
+                    case 'edit':
+                        if (buttonElement.textContent.includes('Activate')) {
+                            if (confirm('Activate this user? They will be able to access the platform again.')) {
+                                updateUserStatus(id, 'active', source);
+                            }
+                        } else {
+                            if (source === 'admin') {
+                                notify(`Edit professional profile ${id} - Feature coming soon`, 'info');
+                            } else {
+                                notify(`Edit user ${id} - Feature coming soon`, 'info');
+                            }
+                        }
+                        break;
+                    case 'suspend':
+                        if (source === 'admin') {
+                            notify('Cannot suspend professional accounts from this interface', 'warning');
+                        } else {
+                            if (confirm('Suspend this user? They will not be able to access the platform.')) {
+                                updateUserStatus(id, 'suspended', source);
+                            }
+                        }
+                        break;
+                }
+            }
+
+            async function updateUserStatus(id, newStatus) {
+                try {
+                    // This would need a backend endpoint to update user status
+                    notify(`User status update to ${newStatus} - Backend endpoint needed`, 'warning');
+                    // For now, just reload the users to show current state
+                    setTimeout(() => loadUsers(), 1000);
+                } catch (error) {
+                    notify(`Failed to update user status: ${error.message}`, 'error');
                 }
             }
 
@@ -819,6 +988,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     notify(`Delete failed: ${error.message}`, 'error');
                 }
             }
+
+            // Add refresh button handler for users
+            on(byId('refresh-users-btn'), 'click', function() {
+                console.log('🔄 Refreshing users...');
+                loadUsers();
+            });
 
             // User creation form
             const addUserForm = byId('add-user-form');
@@ -1570,41 +1745,28 @@ document.addEventListener('DOMContentLoaded', function() {
     window.joinMeeting = joinMeeting;
     window.closeAppointmentModal = closeAppointmentModal;
     window.loadMyAppointments = loadMyAppointments;
+            // Expose loadUsers function globally for HTML onclick handlers
+            window.loadUsers = loadUsers;
 
-    // Setup appointment filters
-    setupAppointmentFilters();
+            // ==================== INITIALIZATION ====================
+            function initCurrentSection() {
+                const activeSection = $('.content-section.active');
+                if (activeSection) {
+                    setTimeout(() => initSection(activeSection.id), 200);
+                }
+            }
 
-    // Add click handler for appointment detail modal overlay
-    on(byId('appointment-detail-modal'), 'click', function(e) {
-        if (e.target === this) {
-            closeAppointmentModal();
-        }
-    });
-
-    // Add refresh button handler
-    on(byId('refresh-appointments'), 'click', function() {
-        loadMyAppointments();
-    });
-
-    // ==================== INITIALIZATION ====================
-    function initCurrentSection() {
-        const activeSection = $('.content-section.active');
-        if (activeSection) {
-            setTimeout(() => initSection(activeSection.id), 200);
-        }
-    }
-
-    // Start everything
-    setTimeout(() => {
-        const activeSection = $('.content-section.active');
-        if (activeSection) {
-            initSection(activeSection.id);
-        } else if (!isAdmin) {
-            initSection('my-appointments');
-        } else {
-            initSection('dashboard');
-        }
-    }, 300);
+            // Start everything
+            setTimeout(() => {
+                const activeSection = $('.content-section.active');
+                if (activeSection) {
+                    initSection(activeSection.id);
+                } else if (!isAdmin) {
+                    initSection('my-appointments');
+                } else {
+                    initSection('dashboard');
+                }
+            }, 300);
 
     updateDateDisplay();
 
